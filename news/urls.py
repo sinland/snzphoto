@@ -1,5 +1,7 @@
+__author__ = 'PervinenkoVN'
+
 from django.conf.urls import patterns, include, url
-from news import views as news_views
+from news import views
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -7,8 +9,8 @@ from news import views as news_views
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', news_views.index),
-    url(r'^news/', include('news.urls', namespace='news')),
+    # url(r'^$', 'snzphoto.views.home', name='home'),
+    url(r'^$', views.index, name='index'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -16,3 +18,4 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 )
+

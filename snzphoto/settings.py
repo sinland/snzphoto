@@ -104,6 +104,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join(DIR, '..\\templates').replace('\\', '/'),
 )
 
 INSTALLED_APPS = (
@@ -117,6 +118,11 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'news',
+    'photos',
+    'videos',
+    'mngmnt',
+    'debates'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -127,6 +133,14 @@ INSTALLED_APPS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[%(levelname)s] [%(asctime)s]: (%(module)s) %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
@@ -137,7 +151,13 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+    'file_dump' : {
+        'level' : 'DEBUG',
+        'class' : 'logging.FileHandler',
+        'filename' : os.path.join(DIR, 'snzphotosite.log'),
+        'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django.request': {
