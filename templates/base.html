@@ -2,15 +2,34 @@
 <html>
 <head>
     <title>{% block page_title %}Снеж-Фото{% endblock %}</title>
+    <style type="text/css">
+        .footer {
+            border-top: 1px solid #daa520;
+            margin-top: 10px;
+            padding-top: 10px
+        }
+        .header{
+            border-bottom: 1px solid #daa520;
+            margin-bottom: 10px;
+            padding-bottom: 10px
+        }
+        .navigation{
+            border-bottom: 1px solid #daa520;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            font-size: 1.2em;
+
+        }
+    </style>
 </head>
 <body>
-<div class='header'><h1>My Page HEAD</h1></div>
+<div class='header'><h1>Заголовок</h1></div>
+<div class="navigation">Новости | Фото | Видео</div>
 {% block content %}
     <h1>Default Content</h1>
 {% endblock %}
 <div class='footer'>
-    <hr>
-    Thanks!
+    Подвал
 </div>
 </body>
 </html>

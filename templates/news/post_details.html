@@ -1,0 +1,10 @@
+{% extends "news/base_news.html" %}
+{% load url from future %}
+
+{% block content %}
+    <h1>{{ post.title }}</h1>
+    <div>{{ post.text }}</div>
+
+    <br>
+    <a href="{% url 'news:index' %}">to news</a>
+{% endblock %}

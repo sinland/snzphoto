@@ -1,2 +1,27 @@
 {% extends "news/base_news.html" %}
-{% block content %}<h1>{{ var1 }}</h1>{% endblock %}
+{% load url from future %}
+
+{% block content %}
+    {% for news in view_news %}
+{#        <a href="{{ news.get_absolute_url }}">{{ news.title|upper }} </a>(<small>{{ news.text }}</small>)<br />#}
+        <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a><br/>
+    {% endfor %}
+
+
+    <div class="pagination">
+    <span class="step-links">
+        {% if view_news.has_previous %}
+            <a href="{% url 'news:paged_index' view_news.previous_page_number %}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ view_news.number }} of {{ view_news.paginator.num_pages }}.
+        </span>
+
+        {% if view_news.has_next %}
+            <a href="{% url 'news:paged_index' view_news.next_page_number %}">next</a>
+        {% endif %}
+    </span>
+    </div>
+
+{% endblock %}

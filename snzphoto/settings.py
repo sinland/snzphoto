@@ -2,7 +2,7 @@ import os
 
 # Django settings for snzphoto project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -167,3 +167,5 @@ LOGGING = {
         },
     }
 }
+
+NEWS_PER_PAGE = 10
