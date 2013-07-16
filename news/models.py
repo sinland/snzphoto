@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from snzphoto.utils import translit
 
 class NewsPost(models.Model):
     id = models.AutoField(primary_key=True)
@@ -17,10 +18,10 @@ class NewsPost(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            tmp_uid = slugify(self.title)
+            tmp_uid = translit(self.title)
             similar = NewsPost.objects.filter(uid=tmp_uid)
             if similar.count() > 0:
-                tmp_uid = "%s%d" % (tmp_uid, int(NewsPost.objects.latest('id').id) + 1)
+                tmp_uid = "%s-%d" % (tmp_uid, similar.count() + 1)
             self.uid = tmp_uid
         super(NewsPost, self).save(*args, **kwargs)
 
