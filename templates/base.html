@@ -1,35 +1,69 @@
+{% load url from future %}
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block page_title %}Снеж-Фото{% endblock %}</title>
-    <style type="text/css">
-        .footer {
-            border-top: 1px solid #daa520;
-            margin-top: 10px;
-            padding-top: 10px
-        }
-        .header{
-            border-bottom: 1px solid #daa520;
-            margin-bottom: 10px;
-            padding-bottom: 10px
-        }
-        .navigation{
-            border-bottom: 1px solid #daa520;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            font-size: 1.2em;
-
-        }
-    </style>
+    <script type="text/javascript" src={% static 'js/jquery-1.8.3.min.js' %}></script>
+    <script type="text/javascript" src={% static 'js/underscore-min.js' %}></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
 <body>
-<div class='header'><h1>Заголовок</h1></div>
-<div class="navigation">Новости | Фото | Видео</div>
-{% block content %}
-    <h1>Default Content</h1>
-{% endblock %}
+<div class='header' style='position: relative; height: 100px;'>
+    <div><h1>Заголовок</h1></div>
+    <div class='user_panel' style='float: right; margin-top: 20px; margin-right : 20px; text-align: right;'>
+        {% if user and user.is_anonymous %}
+            {% csrf_token %}
+            <input type="text" name="login"><br>
+            <input type="password" name="password"><br>
+            <input type="button" name="btn_login" value="Login" />
+            <script type="text/javascript">var logged = false;</script>
+        {% elif user and not user.is_anonymous %}
+            <script type="text/javascript">var logged = true;</script>
+        {% endif %}
+    </div>
+</div>
+<div class="navigation"><a href="{%  url 'news:index' %}">Новости</a> | Фото | Видео</div>
+{% block content %}{% endblock %}
 <div class='footer'>
     Подвал
 </div>
+
+<script type='text/plain' id="logged_user_panel" >
+    <%= username %> <a href="{% url 'management:index' %}">[Панель управления]</a> <a href="{% url 'logout_handler' %}">[Выход]</a>
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+      var show_user_panel = function(args){
+          var tmlSource = $('#logged_user_panel').html();
+          var tml = _.template(tmlSource, args);
+          $('div.user_panel').html(tml);
+      };
+      if(logged) show_user_panel({ username : '{{ user.username }}' });
+      else{
+          $('input[name=btn_login]').click(function(e){
+              var login = $('input[name=login]').val();
+              var pass = $('input[name=password]').val();
+              var csrf = $('input[name=csrfmiddlewaretoken]').val();
+              if(login.length < 1 || pass.length < 1){
+                  return;
+              }
+              $.post('{% url 'login_handler' %}', {'login' : login, 'pwd' : pass, 'csrfmiddlewaretoken' : csrf}, function(data){
+                  var result = JSON.parse(data);
+                  if(result.code == 0){
+                      show_user_panel({ username : result.username });
+                  }
+                  else{
+                      $('input[name=login]').val('');
+                      $('input[name=password]').val('');
+                      alert(result.message);
+                  }
+              });
+          });
+      }
+    });
+</script>
 </body>
 </html>

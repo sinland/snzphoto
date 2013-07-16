@@ -1,0 +1,8 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+
+{% block content %}
+    {% for post in news %}
+        <div><a href="{% url 'management:news_edit' post.id  %}">{{ post.title }}</a></div>
+    {% endfor %}
+{% endblock %}

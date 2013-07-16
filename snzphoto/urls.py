@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from news import views as news_views
+from snzphoto import ajax, views
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
@@ -9,13 +10,10 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', news_views.index),
     url(r'^news/', include('news.urls', namespace='news')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^management/', include('mngmnt.urls', namespace='management')),
+    url(r'^login/$', ajax.login_handler, name='login_handler'),
+    url(r'^logout/$', views.logout_action, name='logout_handler'),
 )
 
-handler404 = 'snzphoto.views.page_not_found'
-handler500 = 'snzphoto.views.server_error'
+#handler404 = 'snzphoto.views.page_not_found'
+#handler500 = 'snzphoto.views.server_error'

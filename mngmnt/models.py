@@ -1,3 +1,6 @@
-from django.db import models
+from django import forms
+from news.models import *
 
-# Create your models here.
+class NewsPostForm(forms.ModelForm):
+    class Meta:
+        model = NewsPost

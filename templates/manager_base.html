@@ -1,0 +1,30 @@
+{% load url from future %}
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block page_title %}Снеж-Фото - Панель управления{% endblock %}</title>
+    <script type="text/javascript" src={% static 'js/jquery-1.8.3.min.js' %}></script>
+    <script type="text/javascript" src={% static 'js/underscore-min.js' %}></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+<div class='header' style='position: relative; height: 100px;'>
+    <div><h1>Панель управления</h1></div>
+    <div class='user_panel' style='float: right; margin-top: 20px; margin-right : 20px; text-align: right;'>
+        {{ user.username }} <a href="{% url 'management:index' %}">[Панель управления]</a> <a href="{% url 'logout_handler' %}">[Выход]</a>
+    </div>
+</div>
+<div class="navigation"><a href="{%  url 'news:index' %}">Новости</a> | Фото | Видео</div>
+{% block content %}{% endblock %}
+<div class='footer'>
+    Подвал
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+    });
+</script>
+</body>
+</html>

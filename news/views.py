@@ -1,7 +1,4 @@
-from django.http import HttpResponse
-from django.template.loader import get_template
-from django.template import Context
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from news.models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from snzphoto import settings
@@ -16,8 +13,8 @@ def index(r, page='1'):
     except EmptyPage:
         view_news = paginator.page(paginator.num_pages)
 
-    return render_to_response('news/index.html', locals())
+    return render(r, 'news/index.html', locals())
 
 def show_post(r, post_uid):
     post = get_object_or_404(NewsPost, uid=post_uid)
-    return render_to_response('news/post_details.html', locals())
+    return render(r, 'news/post_details.html', locals())

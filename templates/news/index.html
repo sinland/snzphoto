@@ -3,11 +3,12 @@
 
 {% block content %}
     {% for news in view_news %}
-{#        <a href="{{ news.get_absolute_url }}">{{ news.title|upper }} </a>(<small>{{ news.text }}</small>)<br />#}
-        <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a><br/>
+        <div class='news_post'>
+            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username }})<br/>
+            <span>{{ news.text|truncatewords_html:10 }}</span>
+        </div>
+
     {% endfor %}
-
-
     <div class="pagination">
     <span class="step-links">
         {% if view_news.has_previous %}
@@ -23,5 +24,4 @@
         {% endif %}
     </span>
     </div>
-
 {% endblock %}
