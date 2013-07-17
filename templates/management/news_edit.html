@@ -1,9 +1,79 @@
 {% extends 'manager_base.html' %}
-{% block content %}
-    <form action="" method="post">
-    {{ form.as_p }}
-        <input type="submit" value="GO" />
-    {% csrf_token %}
-    </form>
+{% load url from future %}
+{% load staticfiles %}
 
+{% block content %}
+    <div>
+        {% if form.uid.errors %}
+            <div class='alert alert-error'>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {% for e in form.uid.errors %}{{ e }}<br>{% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <div class='news-edit-form'>
+    <form action="" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>Редактирование новости ({{ post.author.username }}; {{ post.creation_date }})</legend>
+            <div class="control-group">
+                <label class="control-label">Заголовок: </label>
+                <div class="controls">
+                    {{ form.title }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Текст: </label>
+                <div class="controls">
+                    {{ form.text }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Постоянный адрес:</label>
+                <div class="controls">
+                    {{ form.uid}}
+                </div>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+        {% if post.enclosure %}
+            <div class="control-group">
+                <label class="control-label">Прикрепленный файл</label>
+                <div class="controls"><img src="" class="img-polaroid" alt=""></div>
+            </div>
+        {% else %}
+            <form id="attach_uploader" class="form-horizontal" action="{% url 'management:news_media_reciever' post.id %}" method="post" target="upload_iframe" enctype="multipart/form-data">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Прикрепить файл:</label>
+                        <div class="controls">
+                            <div style="overflow: hidden; width: 120px; height: 50px; border: 0px dashed #fff; background-color: #fff;">
+                                <button type="button" class="btn">...</button>
+                                <input id='userfile' name='userfile' type='file' size='1' maxlength='255' style="margin-top: -50px; margin-left: -410px; -moz-opacity: 0; opacity: 0; filter: alpha(opacity=0); font-size: 150px; height: 100px;">
+                            </div>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class='btn btn-primary' >Сохранить</button>
+                            <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:news_index' %}'" >Отмена</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+            <iframe src='' id='upload_target' name='upload_iframe' style='width: 0; height: 0; border: 0px solid #FFF'></iframe>
+        {% endif %}
+    </div>
+    <script type="text/javascript">
+        function onUploadFinished(code, msg, thumbName){
+            console.log('upload finished. code: ' + code + '; msg: ' + msg + '; file_name: ' + thumbName);
+        }
+        $(document).ready(function(){
+       $('div.news-edit-form textarea').addClass('input-xxlarge');
+        $('#userfile').change(function(){
+           $('#attach_uploader').submit();
+        });
+    });
+    </script>
 {% endblock %}

@@ -5,6 +5,7 @@ from django.http import HttpResponse
 import re
 import json
 
+
 def login_handler(r):
     if r.method != 'POST':
         return HttpResponse(get_json_response(code=1, message='GET method in invalid for this request'))
