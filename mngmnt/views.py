@@ -1,13 +1,10 @@
+# -*- coding: utf-8 -*-
+
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from news.models import *
 from mngmnt.models import *
-#from django.contrib.auth.decorators import login_required
-# Create your views here.
-
-#@login_required(redirect_field_name='goto', login_url= reverse('news:index'))
-from snzphoto import settings
 
 def index(r):
     if not r.user.is_authenticated():
@@ -36,18 +33,48 @@ def news_add(r):
 def news_edit(r, news_id):
     if not r.user.is_authenticated():
         return redirect('news:index', permanent=True)
-
     try:
         news_obj = NewsPost.objects.get(pk=news_id)
     except NewsPost.DoesNotExist:
         return redirect('management:news_index', permanent=True)
 
     if r.method == 'GET':
-        return render(r, 'management/news_edit.html', {'form' : NewsPostForm(instance=news_obj)})
+        return render(r, 'management/news_edit.html',{
+                'form' : NewsPostForm(initial={
+                    'title' : news_obj.title,
+                    'text' : news_obj.text,
+                    'uid' : news_obj.uid
+                }),
+                'post' : news_obj
+        })
     elif r.method == 'POST':
-        form = NewsPostForm(r.POST, instance=news_obj)
-        if form.is_valid():
-            form.save()
+        form = NewsPostForm(r.POST)
+        try:
+            if form.is_valid():
+                news_obj.title = form.cleaned_data['title']
+                news_obj.text = form.cleaned_data['text']
+                token_uid = form.cleaned_data['uid']
+                try:
+                    post = NewsPost.objects.get(uid=token_uid)
+                    if post.id != news_obj.id:
+                        form.errors[u'uid'] = u'Заданный адрес уже используется другой новостью'
+                        raise ValueError
+                except NewsPost.MultipleObjectsReturned:
+                    # указанный адрес уже испольуется и где-то в базе есть конфликт адресов
+                    form.errors[u'uid'] = u'Заданный адрес уже используется'
+                    raise ValueError
+                except NewsPost.DoesNotExist:
+                    pass
+
+                news_obj.uid = token_uid
+                news_obj.save()
+            else:
+                raise ValueError
+        except ValueError:
+            return render(r, 'management/news_edit.html',{
+                'form' : form,
+                'post' : news_obj
+            })
 
     #return to index
     return redirect('management:news_index')

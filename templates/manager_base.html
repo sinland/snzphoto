@@ -16,7 +16,7 @@
         {{ user.username }} <a href="{% url 'management:index' %}">[Панель управления]</a> <a href="{% url 'logout_handler' %}">[Выход]</a>
     </div>
 </div>
-<div class="navigation"><a href="{%  url 'news:index' %}">Новости</a> | Фото | Видео</div>
+<div class="navigation"><a href="{%  url 'management:news_index' %}">Новости</a> | Фото | Видео</div>
 {% block content %}{% endblock %}
 <div class='footer'>
     Подвал
