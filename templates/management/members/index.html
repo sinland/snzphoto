@@ -20,7 +20,7 @@
                 <tbody>
                 {% for member in members %}
                     <tr>
-                        <td><a href="#"><i class="icon-trash ico-close"></i></a>&nbsp;
+                        <td><a href="{% url 'management:member_delete' member.id %}"><i class="icon-trash ico-close"></i></a>&nbsp;
                             <a href="{% url 'management:member_edit' member.id %}"><i class="icon-edit ico-close"></i></a>
                         </td>
                         <td>{{ member.get_full_name }}</td>

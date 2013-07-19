@@ -3,6 +3,7 @@ from django.views.decorators.cache import never_cache, cache_control
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from news.models import NewsPost
 from models import MemberForm
 
 __author__ = 'PervinenkoVN'
@@ -36,7 +37,8 @@ def edit(request, mid):
     except User.DoesNotExist:
         response = redirect('management:members_index')
         response['x-error-msg'] = '404: User not found'
-    if request.method == 'GET':
+
+    if member and request.method == 'GET':
         response = render(request, 'management/members/edit.html', {
             'section' : 'members',
             'member' : member,
@@ -48,7 +50,7 @@ def edit(request, mid):
                 'is_staff' : member.is_staff
             })
         })
-    elif request.method == 'POST':
+    elif member and request.method == 'POST':
         form = MemberForm(request.POST)
         if not form.is_valid():
             response = render(request, 'management/members/edit.html', {
@@ -104,6 +106,46 @@ def add(request):
             member.is_staff = form.cleaned_data['is_staff']
             member.save()
 
+            response = redirect('management:members_index')
+    else:
+        response = redirect('management:members_index')
+        response['x-error-msg'] = '500 Method is not supported'
+    return response
+
+
+def delete(request, mid):
+    if not request.user.is_staff:
+        return redirect('news:index')
+
+    response = None
+    member = None
+
+    try:
+        member = User.objects.get(pk=mid)
+    except User.DoesNotExist:
+        response = redirect('management:members_index')
+        response['x-error-msg'] = '404: User not found'
+
+    if member and request.method == 'GET':
+        response = render(request, 'management/members/delete.html', {
+            'section' : 'members',
+            'member' : member
+        })
+    elif member and request.method == 'POST':
+        if NewsPost.objects.filter(author=member).count() > 0:
+            response = render(request, 'management/members/delete.html', {
+                'section' : 'members',
+                'member' : member,
+                'error' : u'Невозможно удалить пользователя: удалите записи в разделе Новости созданные от имени этого пользователя'
+            })
+        elif False: # todo: проверить альбомы и фотографии
+            pass
+        elif False: # todo: проверить видеозаписи
+            pass
+        elif False: # todo: проверить записи в дискуссиях
+            pass
+        else:
+            member.delete()
             response = redirect('management:members_index')
     else:
         response = redirect('management:members_index')

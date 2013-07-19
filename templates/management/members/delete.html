@@ -1,0 +1,26 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% block content %}
+
+
+<form id="edit-form" action="" method="post" class="form-horizontal">
+    {% if error %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ error }}
+        </div>
+    {% endif %}
+    <fieldset>
+        <legend>Удаление пользователя</legend>
+        <div>Вы уверены, что хотите удалить пользователя <b>"{{ member.username }}"</b> ?</div>
+        <div class="clearfix">&nbsp;</div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class='btn btn-primary'>Да, удалить</button>
+                <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:members_index' %}'" >Отмена</button>
+            </div>
+        </div>
+        {% csrf_token %}
+    </fieldset>
+</form>
+{% endblock %}

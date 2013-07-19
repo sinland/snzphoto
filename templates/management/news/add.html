@@ -1,7 +1,10 @@
 {% extends 'manager_base.html' %}
 {% load url from future %}
 {% load staticfiles %}
-
+{% block head %}
+    <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+{% endblock %}
 {% block content %}
 {% if form.uid.errors %}
     <div class='alert alert-error'>
