@@ -7,6 +7,7 @@ import hashlib
 import datetime
 from PIL import Image
 from django.http import HttpResponse
+from django.views.decorators.cache import never_cache, cache_control
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.core.files.storage import default_storage as fs
@@ -16,11 +17,10 @@ from mngmnt.models import *
 #global objects
 log = logging.getLogger(name='manager.ajax')
 
+@cache_control(must_revalidate=True)
 def index(r, page = 1):
     if not r.user.is_authenticated():
         return redirect('news:index')
-
-
     paginator = Paginator(NewsPost.objects.all().order_by('-creation_date', 'author'), 20)
     try:
         view_news = paginator.page(page)
@@ -29,18 +29,19 @@ def index(r, page = 1):
     except EmptyPage:
         view_news = paginator.page(paginator.num_pages)
 
-    return render(r, 'management/news_index.html', {
+    return render(r, 'management/news/index.html', {
         'news' : view_news,
         'section' : 'news',
         'total_count' : NewsPost.objects.count()
     })
 
+@never_cache
 def add_article(r):
     if not r.user.is_authenticated():
         return redirect('news:index')
     result = None
     if r.method == 'GET':
-        result = render(r, 'management/news_add.html',{
+        result = render(r, 'management/news/add.html',{
             'form' : NewsPostForm(),
             'section' : 'news'
         })
@@ -56,7 +57,7 @@ def add_article(r):
                     thumb_url = fs.url(uploaded_thumb_file)
 
         if not form.is_valid():
-            result = render(r, 'management/news_add.html',{
+            result = render(r, 'management/news/add.html',{
                 'form' : form,
                 'section' : 'news',
                 'tmp_attach_name' : tmp_attach_name,
@@ -102,6 +103,7 @@ def add_article(r):
                         pass
     return result
 
+@never_cache
 def edit_article(r, news_id):
     if not r.user.is_authenticated():
         return redirect('news:index', permanent=True)
@@ -111,7 +113,7 @@ def edit_article(r, news_id):
         return redirect('management:news_index', permanent=True)
 
     if r.method == 'GET':
-        return render(r, 'management/news_edit.html',{
+        return render(r, 'management/news/edit.html',{
             'form' : NewsPostForm(initial={
                 'title' : news_obj.title,
                 'text' : news_obj.text,
@@ -190,7 +192,7 @@ def edit_article(r, news_id):
             else:
                 raise ValueError
         except ValueError:
-            return render(r, 'management/news_edit.html',{
+            return render(r, 'management/news/edit.html',{
                 'form' : form,
                 'post' : news_obj,
                 'section' : 'news'
@@ -200,6 +202,7 @@ def edit_article(r, news_id):
     resp['X-Operation-Status'] = 'success'
     return resp
 
+@never_cache
 def delete_article(r, news_id):
     if not r.user.is_authenticated():
         return redirect('news:index')
@@ -208,7 +211,7 @@ def delete_article(r, news_id):
     try:
         news_obj = NewsPost.objects.get(pk=news_id)
         if r.method == 'GET':
-            result = render(r, "management/news_delete.html", {'post' : news_obj, 'section' : 'news'})
+            result = render(r, "management/news/delete.html", {'post' : news_obj, 'section' : 'news'})
             result["X-RCode"] = 200
         elif r.method == "POST":
             comments = NewsPostComment.objects.filter(news_post=news_obj)
@@ -238,9 +241,9 @@ def delete_article(r, news_id):
         result = redirect('management:news_index', permanent=True)
         result["X-RCode"] = "500: %s" % ex.message
 
-    result['Cache-Control'] = 'no-cache'
     return result
 
+@never_cache
 def attachment_upload(r):
     if not r.user.is_authenticated():
         return HttpResponse(get_script_response(code=1, message='Unauthorized'))
@@ -281,6 +284,7 @@ def attachment_upload(r):
         )
     )
 
+@never_cache
 def attachment_remove(r):
     if not r.user.is_authenticated():
         return HttpResponse(get_json_response(code=1, message='Unauthorized'))

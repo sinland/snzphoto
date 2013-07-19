@@ -1,0 +1,77 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block content %}
+    {% if form.first_name.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.first_name.errors %}Имя: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.last_name.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.last_name.errors %}Фамилия: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.email.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.email.errors %}E-Mail: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    <form id="edit-form" action="" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>Редактирование пользователя</legend>
+            <div class="control-group">
+                <label class="control-label">Логин</label>
+                <div class="controls">
+                    <span class="uneditable-input">{{ member.username }}</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Имя</label>
+                <div class="controls">
+                    {{ form.first_name }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Фамилия</label>
+                <div class="controls">
+                    {{ form.last_name }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">E-Mail</label>
+                <div class="controls">
+                    {{ form.email }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Администратор</label>
+                <div class="controls">
+                    {{ form.is_staff }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Активность</label>
+                <div class="controls">
+                    {{ form.is_active }}
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class='btn btn-primary'>Сохранить</button>
+                    <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:members_index' %}'" >Отмена</button>
+                </div>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('form#edit-form input[type=text]').addClass('input-xxlarge')
+        });
+    </script>
+{% endblock %}

@@ -34,7 +34,7 @@
                 <div class="span1">
                     <div class="btn-group" style="margin-top: 20px; margin-right: 20px;">
                         <a class="btn dropdown-toggle btn-small" data-toggle="dropdown" href="#">
-                            {{ user.username|capfirst }}
+                            {{ user.username|lower }}
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu pull-right">
@@ -52,7 +52,7 @@
                         <li class="{% if section == "albums" %}active{% endif %}"><a href="{% url 'management:albums_index' %}">Фотографии</a></li>
                         <li class="{% if section == "video" %}active{% endif %}"><a href="{% url 'management:video_index' %}">Видео</a></li>
                         <li class="{% if section == "debates" %}active{% endif %}"><a href="{% url 'management:debates_index' %}">Обсуждения</a></li>
-                        <li class="{% if section == "members" %}active{% endif %}"><a href="{% url 'management:members_index' %}">Пользователи</a></li>
+                        {% if user.is_staff %}<li class="{% if section == "members" %}active{% endif %}"><a href="{% url 'management:members_index' %}">Пользователи</a></li>{% endif %}
                     </ul>
                 </div>
             </div>
@@ -64,7 +64,6 @@
         </div>
         <div class="span3"></div>
     </div>
-
 </div>
 </body>
 </html>

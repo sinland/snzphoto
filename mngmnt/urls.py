@@ -23,4 +23,6 @@ urlpatterns = patterns('',
 
     url(r'^members/$', members_views.index, name='members_index'),
     url(r'^members/page/(?P<page>\d+)$', members_views.index, name='members_paged_index'),
+    url(r'^members/add/$', members_views.add, name='member_add'),
+    url(r'^members/(?P<mid>\d+)/edit/$', members_views.edit, name='member_edit'), # get = read, post = update
 )
