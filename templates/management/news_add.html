@@ -3,48 +3,52 @@
 {% load staticfiles %}
 
 {% block content %}
-    {% if form.uid.errors %}
+{% if form.uid.errors %}
+    <div class='alert alert-error'>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for e in form.uid.errors %}URL: {{ e }}<br>{% endfor %}
+    </div>
+{% endif %}
+{% if form.title.errors %}
+    <div class='alert alert-error'>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {% for e in form.title.errors %}Заголовок: {{ e }}<br>{% endfor %}
+    </div>
+{% endif %}
+    {% if form.text.errors %}
         <div class='alert alert-error'>
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {% for e in form.uid.errors %}{{ e }}<br>{% endfor %}
+            {% for e in form.text.errors %}Текст новости: {{ e }}<br>{% endfor %}
         </div>
     {% endif %}
-    <form id="post-edit-form" action="" method="post" class="form-horizontal">
-        <fieldset>
-            <legend>Редактирование новости ({{ post.author.username }}; {{ post.creation_date }})</legend>
-            <div class="control-group">
-                <label class="control-label">Заголовок: </label>
-                <div class="controls">
-                    {{ form.title }}
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Строка адреса:</label>
-                <div class="controls">
-                    {{ form.uid }}
-                    <span class="help-inline"><small>Адрес может состоять из букв, цифр и знаков "-" и "_" </small></span>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Текст: </label>
-                <div class="controls">
-                    {{ form.text }}
-                </div>
-            </div>
-            {% csrf_token %}
-            <input type="hidden" id="tmp_attach_name" name="" value="">
-            <input type="hidden" id="flag_rm_attach" name="" value="">
-        </fieldset>
-    </form>
-    <div id="attach">&nbsp;</div>
-    <div class="form-horizontal">
+<form id="post-edit-form" action="" method="post" class="form-horizontal">
+    <fieldset>
+        <legend>Создание новости</legend>
         <div class="control-group">
+            <label class="control-label">Заголовок: </label>
             <div class="controls">
-                <button type="button" class='btn btn-primary' onclick="$('#post-edit-form').submit()">Сохранить</button>
-                <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:news_index' %}'" >Отмена</button>
+                {{ form.title }}
             </div>
         </div>
+        <div class="control-group">
+            <label class="control-label">Текст: </label>
+            <div class="controls">
+                {{ form.text }}
+            </div>
+        </div>
+        {% csrf_token %}
+        <input type="hidden" id="tmp_attach_name" name="" value="">
+    </fieldset>
+</form>
+<div id="attach">&nbsp;</div>
+<div class="form-horizontal">
+    <div class="control-group">
+        <div class="controls">
+            <button type="button" class='btn btn-primary' onclick="$('#post-edit-form').submit()">Сохранить</button>
+            <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:news_index' %}'" >Отмена</button>
+        </div>
     </div>
+</div>
     <script type="text/javascript">
         function onUploadFinished(code, msg, thumbName){
             app.log('upload finished. code: ' + code + '; msg: ' + msg + '; file_name: ' + thumbName);
@@ -86,9 +90,6 @@
                 var csrf = $('input[name=csrfmiddlewaretoken]').val();
                 $.post('{% url 'management:news_media_eraser' %}', {'base_name' : baseName, 'csrfmiddlewaretoken' : csrf});
             }
-            else{
-                $('input#flag_rm_attach').attr('name', 'flag_rm_attach').val('true');
-            }
 
             showUploadForm();
         }
@@ -104,9 +105,8 @@
                         "indent | alignleft center alignright justify | undo redo | " +
                         "rule link unlink | cut copy paste pastetext"
             });
-
-            {% if post.enclosure %}
-                showUploadedImage('{{ post.attach_thumb_url }}')
+            {% if tmp_attach_name %}
+                showUploadedImage('{{ tmp_thumb_url }}', '{{ tmp_attach_name }}')
             {% else %}
                 showUploadForm();
             {% endif %}
@@ -130,7 +130,7 @@
                     <label class="control-label">Прикрепить файл:</label>
                     <div class="controls">
                         <div style="overflow: hidden; width: 150px; height: 50px; border: 0px; background-color: #fff;">
-                            <button type="button" class="btn btn-small">файл не выбран</button>
+                            <button type="button" class="btn">файл не выбран</button>
                             <input id='<%= inputId %>' name='userfile' type='file' size='1' maxlength='1' style="margin-top: -50px; margin-left: -410px; -moz-opacity: 0; opacity: 0; filter: alpha(opacity=0); font-size: 150px; height: 50px;">
                         </div>
                     </div>

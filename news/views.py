@@ -5,7 +5,7 @@ from snzphoto import settings
 
 # Create your views here.
 def index(r, page='1'):
-    paginator = Paginator(NewsPost.objects.all(), settings.NEWS_PER_PAGE)
+    paginator = Paginator(NewsPost.objects.all().order_by('-creation_date', 'author'), settings.NEWS_PER_PAGE)
     try:
         view_news = paginator.page(page)
     except PageNotAnInteger:

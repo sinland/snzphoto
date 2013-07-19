@@ -2,4 +2,5 @@
 *.pyc
 *snzphotosite.log
 *snzphotosite.s3db
+runserver.cmd
 static_files/

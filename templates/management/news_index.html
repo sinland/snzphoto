@@ -2,7 +2,56 @@
 {% load url from future %}
 
 {% block content %}
-    {% for post in news %}
-        <div><a href="{% url 'management:news_edit' post.id  %}">{{ post.title }}</a></div>
-    {% endfor %}
+    <h3>Новости сайта</h3>
+    <a href="{% url 'management:news_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новую запись</a>
+    {% if news|length > 0 %}
+        <div style='width: 780px' >
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Заголовок</th>
+                <th>Автор</th>
+                <th>Дата создания</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in news %}
+                <tr>
+                    <td><a href="{% url 'management:news_delete' post.id  %}"><i class="icon-trash ico-close"></i></a>&nbsp;<a
+                            href="{% url 'management:news_edit' post.id  %}"><i class="icon-edit ico-close"></i></a></td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.author.username }}</td>
+                    <td>{{ post.creation_date|date:"d.m.Y в H:i" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        </div>
+        {% if news.paginator.num_pages > 1 %}
+            <div class="pagination pagination-small">
+                <ul>
+                    {% if news.has_previous %}
+                        <li><a href="{% url 'management:news_paged_index' news.previous_page_number %}"><i class="icon-arrow-left"></i></a></li>
+                    {% endif %}
+                    {% for p in news.paginator.page_range %}
+                        <li><a href="{% url 'management:news_paged_index' p %}">
+                            {% if p == news.number %}
+                            <b>{{ p }}</b>
+                            {% else %}
+                                {{ p }}
+                            {% endif %}
+                        </a></li>
+                    {% endfor %}
+                    {% if news.has_next %}
+                        <li><a href="{% url 'management:news_paged_index' news.next_page_number %}"><i class="icon-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+        <div>Всего новостей: {{ total_count }}</div>
+        <div class="clearfix">&nbsp;</div>
+    {% else %}
+        <div>Новостей нет</div>
+    {% endif %}
 {% endblock %}

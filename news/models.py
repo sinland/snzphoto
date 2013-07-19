@@ -2,6 +2,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
+from snzphoto import settings
 from snzphoto.utils import translit
 
 class NewsPost(models.Model):
@@ -27,6 +28,19 @@ class NewsPost(models.Model):
 
     def get_absolute_url(self):
         return reverse('news:show_post', kwargs={'post_uid' : self.uid})
+
+    def attach_thumb_url(self):
+        return "%snews/thumbs/%s" % (settings.MEDIA_URL, NewsPost.get_thumbname_from_base(self.enclosure))
+
+    def attach_full_url(self):
+        return "%snews/%s" % (settings.MEDIA_URL, self.enclosure)
+
+    def get_thumbfile_name(self):
+        return NewsPost.get_thumbname_from_base(self.enclosure)
+
+    @staticmethod
+    def get_thumbname_from_base(base):
+        return "thumb_%s" % base
 
 class NewsPostComment(models.Model):
     class Meta:

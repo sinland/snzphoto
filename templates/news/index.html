@@ -4,8 +4,8 @@
 {% block content %}
     {% for news in view_news %}
         <div class='news_post'>
-            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username }})<br/>
-            <span>{{ news.text|truncatewords_html:10 }}</span>
+            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username|capfirst }}; {{ news.creation_date|date:"d.m.Y в H:i" }})<br/>
+            <span>{{ news.text|safe|truncatewords_html:10 }}</span>
         </div>
 
     {% endfor %}

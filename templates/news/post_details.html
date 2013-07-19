@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
-    <div>{{ post.text }}</div>
+    <div>{{ post.text|safe }}</div>
 
     <br>
 {#    <a href="{% url 'news:index' %}">to news</a>#}
