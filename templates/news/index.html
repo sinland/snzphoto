@@ -4,10 +4,9 @@
 {% block content %}
     {% for news in view_news %}
         <div class='news_post'>
-            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username|capfirst }}; {{ news.creation_date|date:"d.m.Y в H:i" }})<br/>
+            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username|capfirst }}; {{ news.creation_date|date:"d.m.Y в H:i" }}) ({{ news.comments_count }})<br/>
             <span>{{ news.text|safe|truncatewords_html:10 }}</span>
         </div>
-
     {% endfor %}
     <div class="pagination">
     <span class="step-links">
@@ -18,7 +17,6 @@
         <span class="current">
             Page {{ view_news.number }} of {{ view_news.paginator.num_pages }}.
         </span>
-
         {% if view_news.has_next %}
             <a href="{% url 'news:paged_index' view_news.next_page_number %}">&rarr;</a>
         {% endif %}

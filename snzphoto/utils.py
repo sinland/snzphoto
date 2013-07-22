@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import json
 import string
 import re
+from django.http import HttpResponse
 
 __author__ = 'PervinenkoVN'
 
@@ -54,3 +55,9 @@ def translit(msg):
     if result.endswith('-'):
         result = result[:len(result) - 1]
     return result
+
+
+def get_json_response(code, values = {} , message = ''):
+    values['code'] = code
+    values['message'] = message
+    return HttpResponse(json.dumps(values))

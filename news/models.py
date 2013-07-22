@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.contrib.auth.models import User
-from django.template.defaultfilters import slugify
+from django import forms
 from snzphoto import settings
 from snzphoto.utils import translit
 
@@ -38,6 +40,9 @@ class NewsPost(models.Model):
     def get_thumbfile_name(self):
         return NewsPost.get_thumbname_from_base(self.enclosure)
 
+    def comments_count(self):
+        return NewsPostComment.objects.filter(news_post=self).count()
+
     @staticmethod
     def get_thumbname_from_base(base):
         return "thumb_%s" % base
@@ -49,8 +54,10 @@ class NewsPostComment(models.Model):
     id = models.AutoField(primary_key=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     news_post = models.ForeignKey(NewsPost, db_column= 'newspost_id')
-    author = models.ForeignKey(User, db_column= 'author_id')
-    text = models.TextField()
+    author_name = models.TextField(max_length=256)
+    msg = models.TextField(max_length=1024)
 
 
-
+class NewsCommentForm(forms.Form):
+    author_name = forms.CharField(max_length=256, label=u'Имя')
+    msg = forms.CharField(max_length=256, label=u'Текст')
