@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from mngmnt import news_views, albums_views, video_views, debates_views, members_views
+from mngmnt import news_views, photos_views, video_views, debates_views, members_views
 
 urlpatterns = patterns('',
     # Examples:
@@ -12,8 +12,18 @@ urlpatterns = patterns('',
     url(r'^news/upload-attach/$', news_views.attachment_upload, name='news_media_reciever'),
     url(r'^news/delete-attach/$', news_views.attachment_remove, name='news_media_eraser'),
 
-    url(r'^albums/$', albums_views.index, name='albums_index'),
-    url(r'^albums/page/(?P<page>\d+)$', albums_views.index, name='albums_paged_index'),
+    url(r'^albums/$', photos_views.index, name='albums_index'),
+    url(r'^albums/page/(?P<page>\d+)$', photos_views.index, name='albums_paged_index'),
+    url(r'^albums/create/$', photos_views.create, name='albums_create'),
+    url(r'^albums/(?P<aid>\d+)/delete/$', photos_views.delete, name='albums_delete'),
+    url(r'^albums/(?P<aid>\d+)/edit/$', photos_views.edit, name='albums_edit'),
+    url(r'^albums/(?P<aid>\d+)/photos/$', photos_views.get_photos, name='albums_photos'),
+    url(r'^albums/(?P<aid>\d+)/upload-photos/$', photos_views.upload_photos, name='albums_uploads'),
+    url(r'^albums/(?P<aid>\d+)/uploader-recieve/$', photos_views.upload_photo_handler, name='albums_upload_recieve'),
+    url(r'^albums/(?P<aid>\d+)/uploader-delete/$', photos_views.upload_photo_delete, name='albums_upload_delete'),
+    url(r'^albums/(?P<aid>\d+)/uploader-save/$', photos_views.upload_photo_save, name='albums_upload_save'),
+    url(r'^albums/(?P<aid>\d+)/photo/(?P<pid>\d+)/update/', photos_views.update_photo, name='albums_photo_update'),
+    url(r'^albums/(?P<aid>\d+)/photo/(?P<pid>\d+)/delete/$', photos_views.delete_photo, name='albums_photo_delete'),
 
     url(r'^video/$', video_views.index, name='video_index'),
     url(r'^video/page/(?P<page>\d+)$', video_views.index, name='video_paged_index'),

@@ -61,3 +61,4 @@ def get_json_response(code, values = {} , message = ''):
     values['code'] = code
     values['message'] = message
     return HttpResponse(json.dumps(values))
+

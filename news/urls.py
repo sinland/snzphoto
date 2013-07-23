@@ -1,6 +1,6 @@
 __author__ = 'PervinenkoVN'
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
 from news import views
 
 urlpatterns = patterns('',

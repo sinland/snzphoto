@@ -17,4 +17,6 @@ class MemberForm(forms.Form):
     login = forms.CharField(max_length=64, required=False, validators=[login_validator])
     password = forms.CharField(min_length=8, max_length=64, required=False, widget=forms.PasswordInput())
 
-
+class AlbumEditForm(forms.Form):
+    title = forms.CharField(max_length=256)
+    description = forms.CharField(max_length=2048, widget=forms.Textarea)

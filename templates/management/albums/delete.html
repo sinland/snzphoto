@@ -1,0 +1,18 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block content %}
+    <form action="" method="post">
+        <legend>Удаление альбома</legend>
+        <fieldset>
+            <div>Это действие приведет к удалению альбома <b>"{{ album.title }}"</b> автора <b>"{{ album.author }}"</b>, созданного <b>{{ album.creation_date|date:"d.m.Y H:i" }}</b>. Уверены, что хотите удалить?</div>
+            <div class="clearfix">&nbsp;</div>
+            <div class="">
+                <button type="submit" class='btn btn-primary'>Да, удалить</button>
+                <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:albums_index' %}'" >Отмена</button>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+{% endblock %}

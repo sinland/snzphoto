@@ -1,0 +1,59 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+{% block head %}
+    <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+{% endblock %}
+{% block content %}
+    {% if form.title.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.title.errors %}URL: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.description.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.description.errors %}Заголовок: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    <form id="post-edit-form" action="" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>Создание альбома</legend>
+            <div class="control-group">
+                <label class="control-label">Заголовок: </label>
+                <div class="controls">
+                    {{ form.title }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Описание: </label>
+                <div class="controls">
+                    {{ form.description }}
+                </div>
+            </div>
+            {% csrf_token %}
+            <div class="control-group">
+                <div class="controls">
+                    <button type="button" class='btn btn-primary' onclick="$('#post-edit-form').submit()">Создать</button>
+                    <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:albums_index' %}'" >Отмена</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('textarea').addClass('input-xxlarge');
+            $('form#post-edit-form input[type=text]').addClass('input-xlarge')
+            $('form#post-edit-form textarea').cleditor({
+                width: 710,
+                height: 250,
+                controls: "bold italic underline strikethrough subscript superscript | font size " +
+                        "style | color highlight removeformat | bullets numbering | outdent " +
+                        "indent | alignleft center alignright justify | undo redo | " +
+                        "rule link unlink | cut copy paste pastetext"
+            });
+        });
+    </script>
+{% endblock %}

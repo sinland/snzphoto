@@ -1,0 +1,32 @@
+{% extends "photos/base_photos.html" %}
+{% load url from future %}
+
+{% block content %}
+    {% if albums|length > 0 %}
+        {% for album in albums %}
+            <div class='album-post'>
+                <a href="{% url 'photos:details' album.id %}">{{ album.title|upper }}</a> ({{ album.author|capfirst }}; {{ album.creation_date|date:"d.m.Y в H:i" }})<br/>
+                <span>{{ album.description|safe|truncatewords_html:20 }}</span>
+            </div>
+        {% endfor %}
+        {% if albums.paginator.num_pages > 1 %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if album.has_previous %}
+                        <a href="{% url 'news:paged_index' album.previous_page_number %}">&larr;</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ album.number }} of {{ album.paginator.num_pages }}.
+                    </span>
+                    {% if album.has_next %}
+                        <a href="{% url 'news:paged_index' album.next_page_number %}">&rarr;</a>
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+        {% else %}
+        <span>Нет альбомов</span>
+    {% endif %}
+
+{% endblock %}

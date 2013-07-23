@@ -17,7 +17,12 @@ DATABASES = {
         'NAME': os.path.join(DIR, 'snzphotosite.s3db'),
     }
 }
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': 'd:/Development/python/snzphoto/cache_files',
+        }
+}
 IMG_THUMBS_SIZE = (256, 256)
 
 # Local time zone for this installation. Choices can be found here:

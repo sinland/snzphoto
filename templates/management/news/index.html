@@ -1,6 +1,5 @@
 {% extends 'manager_base.html' %}
 {% load url from future %}
-
 {% block content %}
     <h4>Новости сайта</h4>
     <a href="{% url 'management:news_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новую запись</a>
@@ -18,9 +17,9 @@
             <tbody>
             {% for post in news %}
                 <tr>
-                    <td><a href="{% url 'management:news_delete' post.id  %}"><i class="icon-trash ico-close"></i></a>&nbsp;<a
-                            href="{% url 'management:news_edit' post.id  %}"><i class="icon-edit ico-close"></i></a></td>
-                    <td>{{ post.title }}</td>
+                    <td><a href="{% url 'management:news_delete' post.id  %}"><i class="icon-trash ico-close"></i></a>&nbsp;
+                        <a href="{% url 'management:news_edit' post.id  %}"><i class="icon-edit ico-close"></i></a></td>
+                    <td><a href="{% url 'management:news_edit' post.id  %}">{{ post.title }}</a></td>
                     <td>{{ post.author.username }}</td>
                     <td>{{ post.creation_date|date:"d.m.Y в H:i" }}</td>
                 </tr>

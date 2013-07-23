@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$', news_views.index),
     url(r'^news/', include('news.urls', namespace='news')),
+    url(r'^photo-gallery/', include('photos.urls', namespace='photos')),
     url(r'^management/', include('mngmnt.urls', namespace='management')),
     url(r'^login/$', ajax.login_handler, name='login_handler'),
     url(r'^logout/$', views.logout_action, name='logout_handler'),

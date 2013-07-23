@@ -2,5 +2,59 @@
 {% load url from future %}
 
 {% block content %}
-Page 'Albums' under construction
+    <h4>Галерея</h4>
+    <a href="{% url 'management:albums_create' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новый альбом</a>
+    {% if albums|length > 0 %}
+        <div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Заголовок</th>
+                    <th>Автор</th>
+                    <th>Число фотографий</th>
+                    <th>Дата создания</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for album in albums %}
+                    <tr>
+                        <td><a href="{% url 'management:albums_delete' album.id %}"><i class="icon-trash ico-close"></i></a>&nbsp;
+                            <a href="{% url 'management:albums_edit' album.id %}"><i class="icon-edit ico-close"></i></a>&nbsp;
+                            <a href="{% url 'management:albums_uploads' album.id %}"><i class="icon-upload ico-close"></i></a></td>
+                        <td><a href="{% url 'management:albums_edit' album.id %}">{{ album.title }}</a></td>
+                        <td>{{ album.author }}</td>
+                        <td>{{ album.photos_count }}</td>
+                        <td>{{ album.creation_date|date:"d.m.Y в H:i" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if albums.paginator.num_pages > 1 %}
+            <div class="pagination pagination-small">
+                <ul>
+                    {% if albums.has_previous %}
+                        <li><a href="#"><i class="icon-arrow-left"></i></a></li>
+                    {% endif %}
+                    {% for p in albums.paginator.page_range %}
+                        <li><a href="#">
+                            {% if p == albums.number %}
+                                <b>{{ p }}</b>
+                            {% else %}
+                                {{ p }}
+                            {% endif %}
+                        </a></li>
+                    {% endfor %}
+                    {% if albums.has_next %}
+                        <li><a href="#"><i class="icon-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+        <div>Всего альбомов: {{ total_count }}</div>
+        <div class="clearfix">&nbsp;</div>
+    {% else %}
+
+    {% endif %}
 {% endblock %}
