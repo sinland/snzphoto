@@ -25,7 +25,7 @@ def index(request, page=1):
     if not request.user.is_authenticated():
         return redirect('news:index')
 
-    paginator = Paginator(PhotoAlbum.objects.all().order_by('-creation_date', 'author'), 20)
+    paginator = Paginator(PhotoAlbum.objects.all().order_by('-creation_date', 'author'), 10)
     try:
         albums = paginator.page(page)
     except PageNotAnInteger:

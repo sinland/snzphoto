@@ -16,7 +16,7 @@
     {% if form.description.errors %}
         <div class='alert alert-error'>
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {% for e in form.description.errors %}Заголовок: {{ e }}<br>{% endfor %}
+            {% for e in form.description.errors %}Описание: {{ e }}<br>{% endfor %}
         </div>
     {% endif %}
     <form id="post-edit-form" action="" method="post" class="form-horizontal">

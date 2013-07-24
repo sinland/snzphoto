@@ -35,10 +35,10 @@
             <div class="pagination pagination-small">
                 <ul>
                     {% if albums.has_previous %}
-                        <li><a href="#"><i class="icon-arrow-left"></i></a></li>
+                        <li><a href="{% url 'management:albums_paged_index' albums.previous_page_number %}"><i class="icon-arrow-left"></i></a></li>
                     {% endif %}
                     {% for p in albums.paginator.page_range %}
-                        <li><a href="#">
+                        <li><a href="{% url 'management:albums_paged_index' p %}">
                             {% if p == albums.number %}
                                 <b>{{ p }}</b>
                             {% else %}
@@ -47,7 +47,7 @@
                         </a></li>
                     {% endfor %}
                     {% if albums.has_next %}
-                        <li><a href="#"><i class="icon-arrow-right"></i></a></li>
+                        <li><a href="{% url 'management:albums_paged_index' albums.next_page_number %}"><i class="icon-arrow-right"></i></a></li>
                     {% endif %}
                 </ul>
             </div>
