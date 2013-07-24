@@ -1,0 +1,64 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/admin_albums.css' %}">
+{% endblock %}
+{% block content %}
+    <h4>Свойства фотографии</h4>
+    {% if form.author.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.author.errors %}Автор: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.description.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.description.errors %}Описание: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    <form action="" method="post" id="frm-photoedit">
+    <div class="uploads-container">
+        <div class="attach-container">
+            <img src="{{ photo.get_thumb_url }}" class="img-polaroid" alt="">
+            <label class="lb-attach-author">Автор:</label>
+            <input name="author" type="text" value="{{ photo.author }}">
+            <label class="lb-attach-descr">Описание:</label>
+            <textarea name="description">{{ photo.description }}</textarea>
+            <a href="#" class="btn btn-attach-save">Сохранить</a>
+            <a href="{% url 'management:albums_edit' album.id %}" class="btn btn-attach-cancel">Отмена</a>
+        </div>
+    </div>
+    {% csrf_token %}
+    </form>
+    <script type="text/javascript">
+        function onSaveClick(e){
+            e.preventDefault();
+            var valid = true;
+            var host = $('div.attach-container');
+            var author = host.find('input[name=author]');
+            if(author.val().length == 0){
+                author.addClass('warning');
+                valid = false;
+            }
+            else{
+                author.removeClass('warning')
+            }
+            var descr = host.find('textarea[name=description]');
+            if(descr.val().length == 0){
+                descr.addClass('warning');
+                valid = false;
+            } else{
+                descr.removeClass('warning')
+            }
+            if(!valid) return;
+
+            $('form#frm-photoedit').submit();
+        }
+        $(document).ready(function(){
+            $('div.attach-container').find('a.btn-attach-save').on('click', onSaveClick);
+        });
+    </script>
+{% endblock %}

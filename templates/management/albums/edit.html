@@ -4,6 +4,7 @@
 {% block head %}
     <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
     <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin_albums.css' %}">
 {% endblock %}
 {% block content %}
     {% if form.title.errors %}
@@ -46,6 +47,25 @@
     <div class='album-photos-preview'><img src="{% static 'img/loading_small.gif' %}" alt=""></div>
     <div style="margin: 10px; margin-left: 0px;;"><a href="{% url 'management:albums_uploads' album.id %}" class="btn btn-primary btn-small">Добавить фотографии в альбом&nbsp;<i class="icon-upload icon-white"></i></a></div>
     <script type="text/javascript">
+        function factoryDeleteClickHanlder(url){
+            return function(){
+                $(this).parent('div').fadeOut(300, function(){$(this).remove();});
+                $.post(url,{
+                    'csrfmiddlewaretoken' : $('input[name=csrfmiddlewaretoken]').val()
+                }, function(response){
+                    var r = $.parseJSON(response);
+                    if(r.code != 200){
+                        app.log('Failed to delete file on server with code: ' + r.code + '; '+ r.message);
+                    }
+                });
+            }
+        }
+        function factoryEditClickHandler(edit_url){
+            return function(){
+                javascript:document.location=edit_url;
+            }
+        }
+
         $(document).ready(function(){
             $('textarea').addClass('input-xxlarge');
             $('form#post-edit-form input[type=text]').addClass('input-xlarge')
@@ -61,15 +81,27 @@
             // loading album photos
             $.getJSON('{% url 'management:albums_photos' album.id %}', function(data){
                 if(data.code == 200){
+                    var container = $('div.album-photos-preview');
                     if (data.photos.length == 0){
-                        $('div.album-photos-preview').html('В альбоме нет фотографий');
+                        container.html('В альбоме нет фотографий');
                     }
                     else{
-                        var container = $('div.album-photos-preview').html('');
+                        container.html('');
                         for(var i=0;i<data.photos.length;i++){
                             var photo = $.parseJSON(data.photos[i]);
-                            container.append(_.template($('#img-tml').html(), {'img_src' : photo.thumb_url}));
+                            $(_.template($('#img-tml').html(), {
+                                    'img_src' : photo.thumb_url,
+                                    'img_alt' : photo.description,
+                                    'pid' : photo.pid
+                                })
+                            ).find('i.icon-remove').on('click', factoryDeleteClickHanlder(photo.delete_url)).end()
+                            .find('i.icon-edit').on('click', factoryEditClickHandler(photo.uplate_url)).end()
+                            .appendTo(container);
                         }
+                        container.find('img').popover({
+                                    'trigger' : 'hover',
+                                    'placement' : 'top'
+                                });
                     }
                 }
                 else{
@@ -79,6 +111,10 @@
         });
     </script>
     <script type="text/template" id="img-tml">
-        <div style="display: inline-block; width: 150px; margin: 10px;"><img src="<%= img_src %>" class="img-polaroid" style="box-shadow: 0px 0px 7px 3px #ddd" alt=""></div>
+        <div id="<%= pid %>">
+            <img src="<%= img_src %>" class="img-polaroid" data-content="<%= img_alt %>">
+            <i class="icon-remove"></i>
+            <i class="icon-edit"></i>
+        </div>
     </script>
 {% endblock %}

@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     url(r'^albums/(?P<aid>\d+)/uploader-recieve/$', photos_views.upload_photo_handler, name='albums_upload_recieve'),
     url(r'^albums/(?P<aid>\d+)/uploader-delete/$', photos_views.upload_photo_delete, name='albums_upload_delete'),
     url(r'^albums/(?P<aid>\d+)/uploader-save/$', photos_views.upload_photo_save, name='albums_upload_save'),
-    url(r'^albums/(?P<aid>\d+)/photo/(?P<pid>\d+)/update/', photos_views.update_photo, name='albums_photo_update'),
+    url(r'^albums/(?P<aid>\d+)/photo/(?P<pid>\d+)/edit/', photos_views.edit_photo, name='albums_photo_update'),
     url(r'^albums/(?P<aid>\d+)/photo/(?P<pid>\d+)/delete/$', photos_views.delete_photo, name='albums_photo_delete'),
 
     url(r'^video/$', video_views.index, name='video_index'),

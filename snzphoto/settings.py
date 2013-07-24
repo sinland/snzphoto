@@ -187,6 +187,11 @@ LOGGING = {
             'handlers' : ['file_dump'],
             'level' : 'ERROR',
             'propagate' : True
+        },
+        'admin.photo_views' : {
+            'handlers' : ['file_dump'],
+            'level' : 'ERROR',
+            'propagate' : True
         }
     }
 }

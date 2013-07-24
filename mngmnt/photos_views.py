@@ -6,21 +6,25 @@ import json
 import logging
 import hashlib
 import datetime
-from time import sleep
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render, redirect
-from django.views.decorators.cache import never_cache, cache_control
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.cache import never_cache
 from django.core.files.storage import default_storage as fs
 from django.core.cache import cache
+from django.utils.html import escape
 from mngmnt.models import *
 from photos.models import *
 from snzphoto.utils import get_json_response
+
+log = logging.getLogger(name='admin.photo_views')
 
 @never_cache
 def index(request, page=1):
     if not request.user.is_authenticated():
         return redirect('news:index')
+
     paginator = Paginator(PhotoAlbum.objects.all().order_by('-creation_date', 'author'), 20)
     try:
         albums = paginator.page(page)
@@ -47,7 +51,10 @@ def create(request):
         if not form.is_valid():
             response = render(request, 'management/albums/create.html', {'section' : 'albums', 'form' : form })
         else:
-            album = PhotoAlbum(author=request.user, title=form.cleaned_data['title'], description=form.cleaned_data['description'],
+            album = PhotoAlbum(
+                author=request.user,
+                title=escape(form.cleaned_data['title']),
+                description=form.cleaned_data['description'],
                 views_counter = 0)
             album.save()
             response = redirect('management:albums_index')
@@ -60,22 +67,32 @@ def edit(request, aid):
     if not request.user.is_authenticated():
         return redirect('news:index')
     response = None
-    try:
-        album = PhotoAlbum.objects.get(pk=aid)
-        if request.method == 'GET':
+    album = get_object_or_404(PhotoAlbum, pk=aid)
+    if request.method == 'GET':
+        response = render(request,
+            'management/albums/edit.html', {
+                'section' : 'albums',
+                'album': album,
+                'form' : AlbumEditForm(initial={
+                    'title' : album.title,
+                    'description' : album.description
+                })
+            })
+    elif request.method == 'POST':
+        form = AlbumEditForm(request.POST)
+        if form.is_valid():
+            album.description = form.cleaned_data['description']
+            album.title = form.cleaned_data['title']
+            album.save()
+            response = redirect('management:albums_index')
+        else:
             response = render(request,
                 'management/albums/edit.html', {
                     'section' : 'albums',
                     'album': album,
-                    'form' : AlbumEditForm(initial={
-                        'title' : album.title,
-                        'description' : album.description
-                    })
+                    'form' :form
                 })
-        else:
-            pass
-            response = redirect('management:albums_index')
-    except PhotoAlbum.DoesNotExist:
+    else:
         response = redirect('management:albums_index')
     return response
 
@@ -84,23 +101,20 @@ def delete(request, aid):
     if not request.user.is_authenticated():
         return redirect('news:index')
     response = None
-    try:
-        album = PhotoAlbum.objects.get(pk=aid)
-        if request.method == 'GET':
-            response = render(request, 'management/albums/delete.html', {'section' : 'albums', 'album': album})
-        else:
-            for photo in album.get_photos():
-                for f in (photo.get_file_path(), photo.get_thumb_path()):
-                    if fs.exists(f):
-                        try:
-                            fs.delete(f)
-                        except IOError:
-                            #todo: add error message to log
-                            pass
-                photo.delete()
-            album.delete()
-            response = redirect('management:albums_index')
-    except PhotoAlbum.DoesNotExist:
+    album = get_object_or_404(PhotoAlbum, pk=aid)
+    if request.method == 'GET':
+        response = render(request, 'management/albums/delete.html', {'section' : 'albums', 'album': album})
+    else:
+        for photo in album.get_photos():
+            for f in (photo.get_file_path(), photo.get_thumb_path()):
+                if fs.exists(f):
+                    try:
+                        fs.delete(f)
+                    except IOError as err:
+                        log.error("Failed to delete photo data-file '%s': %s" % (f, err.message))
+                        pass
+            photo.delete()
+        album.delete()
         response = redirect('management:albums_index')
     return response
 
@@ -114,11 +128,19 @@ def get_photos(request, aid):
         album = PhotoAlbum.objects.get(pk=aid)
         pics = list()
         for p in album.get_photos():
+            desc = ''
+            if len(p.author) > 0:
+                desc += p.author
+            if len(p.description) > 0:
+                desc += " - '%s'" % p.description
+            if len(desc) == 0:
+                desc = u'(Нет описания)'
             pics.append(json.dumps({
+                'pid' : p.id,
+                'delete_url' : reverse('management:albums_photo_delete', kwargs = {'aid' : album.id, 'pid' : p.id}),
+                'uplate_url' : reverse('management:albums_photo_update', kwargs = {'aid' : album.id, 'pid' : p.id}),
                 'thumb_url' : fs.url(p.get_thumb_path()),
-                'url': fs.url(p.get_file_path()),
-                'description' : p.description,
-                'author' : p.author
+                'description' : desc,
             }))
         response = get_json_response(code=200, values={'photos' : pics})
     except PhotoAlbum.DoesNotExist:
@@ -130,14 +152,8 @@ def upload_photos(request, aid):
     if not request.user.is_authenticated():
         return redirect('news:index')
 
-    response = None
-    try:
-        album = PhotoAlbum.objects.get(pk=aid)
-        response = render(request, 'management/albums/upload_photos.html', {'section' : 'albums', 'album' : album})
-    except PhotoAlbum.DoesNotExist:
-        response = redirect('news:index')
-
-    return response
+    album = get_object_or_404(PhotoAlbum, pk=aid)
+    return render(request, 'management/albums/upload_photos.html', {'section' : 'albums', 'album' : album})
 
 @never_cache
 def upload_photo_handler(request, aid):
@@ -145,7 +161,7 @@ def upload_photo_handler(request, aid):
         return get_json_response(403)
 
     if 'request_id' in request.POST:
-        rid = request.POST['request_id']
+        rid = escape(request.POST['request_id'])
     else:
         return get_json_response(400, message='Expected value of RID not found')
 
@@ -170,7 +186,8 @@ def upload_photo_handler(request, aid):
         im = Image.open(fs.path(img_file))
         im.thumbnail((150, 150), Image.ANTIALIAS)
         im.save(fs.path(img_thumb_file), "JPEG")
-    except IOError:
+    except IOError as err:
+        log.error("Failed to create thumbnail '%s'. %s" % (img_thumb_file, err.message))
         fs.save(img_thumb_file, f)
 
     cache.set(uid, (img_file, img_thumb_file))
@@ -219,7 +236,7 @@ def upload_photo_save(request, aid):
     if 'uid' not in request.POST:
         return get_json_response(code=400, message=u'UID expected')
     uid = request.POST['uid']
-    if not re.match('^[a-zA-Z0-9]+$', uid):
+    if re.match('^[a-zA-Z0-9]+$', uid) is None:
         response = get_json_response(code=400, message=u'Bad filename')
 
     uploads = cache.get(uid)
@@ -233,11 +250,19 @@ def upload_photo_save(request, aid):
         return get_json_response(code=400, message=u'Files not found')
 
     ext = uploaded_file.split('.')[-1]
+    if 'author' in request.POST:
+        author = escape(request.POST['author'])
+    else:
+        author = ''
+    if 'description' in request.POST:
+        description = escape(request.POST['description'])
+    else:
+        description = ''
     foto = Photo(album=album,
         filename='%s.%s' % (uid, ext),
         thumbfile='%s.jpg' % uid,
-        description='',
-        author='',
+        description=description,
+        author=author,
         likes_count=0)
 
     trash = []
@@ -255,24 +280,57 @@ def upload_photo_save(request, aid):
         if fs.exists(tfile):
             try:
                 fs.delete(tfile)
-            except IOError:
-                pass
+            except IOError as err:
+                log.error("Failed to delete file '%s'. %s" % (tfile, err.message))
 
     foto.save()
-
     return get_json_response(code=200)
 
 @never_cache
-def update_photo(request, aid, pid):
-    return None
+def edit_photo(request, aid, pid):
+    if not request.user.is_authenticated():
+        return redirect('news:index')
+
+    response = None
+    album = get_object_or_404(PhotoAlbum, pk=aid)
+    photo = get_object_or_404(Photo, pk=pid)
+
+    if request.method == 'GET':
+        response = render(request, 'management/albums/edit_photo.html', {'section' : 'albums', 'album' : album, 'photo' : photo, 'form' : PhotoEditForm})
+    elif request.method == 'POST':
+        form = PhotoEditForm(request.POST)
+        if form.is_valid():
+            photo.author = escape(form.cleaned_data['author'])
+            photo.description = escape(form.cleaned_data['description'])
+            photo.save()
+            response = redirect('management:albums_edit', album.id)
+        else:
+            response = render(request, 'management/albums/edit_photo.html', {'section' : 'albums', 'album' : album, 'photo' : photo, 'form' : PhotoEditForm})
+    else:
+        response = redirect('management:albums_index')
+    return response
 
 @never_cache
 def delete_photo(request, aid, pid):
-    return None
+    if not request.user.is_authenticated():
+        return get_json_response(code=403, message='Authentification reqired')
+    if request.method != 'POST':
+        return get_json_response(code=405, message='POST please!')
+    try:
+        photo = Photo.objects.get(pk=pid)
+    except Photo.DoesNotExist:
+        return get_json_response(code=404, message='Photo not found')
+    trash = [photo.get_file_path(), photo.get_thumb_path()]
+    for f in trash:
+        if fs.exists(f):
+            try:
+                fs.delete(f)
+            except IOError as err:
+                log.error("Failed to delete file '%s'. %s" % (f, err.message))
+    photo.delete()
+    return get_json_response(200)
 
 def get_script_response(code, rid, uid, thumb_url):
     return HttpResponse(
         "<script type=\"text/javascript\">window.top.window.onUploadComplete(%s, '%s', '%s', '%s');</script>" %\
                         (code, rid, uid, thumb_url))
-
-

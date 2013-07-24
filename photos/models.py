@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage as fs
 from django.db import models
 
 class PhotoAlbum(models.Model):
@@ -31,8 +34,18 @@ class Photo(models.Model):
     author = models.CharField(max_length=512)
     likes_count = models.BigIntegerField()
 
+    """Путь к файлу изображения относительно корня хранилища"""
     def get_file_path(self):
         return "gallery/%d/%s" % (self.album.id, self.filename)
 
+    """Путь к файлу эскиза изображения относительно корня хранилища"""
     def get_thumb_path(self):
         return "gallery/%d/thumbs/%s" % (self.album.id, self.thumbfile)
+
+    """URL к файлу изображения относительно корня хранилища"""
+    def get_file_url(self):
+        return fs.url(self.get_file_path())
+
+    """URL к файлу эскиза изображения относительно корня хранилища"""
+    def get_thumb_url(self):
+        return fs.url(self.get_thumb_path())

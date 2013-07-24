@@ -3,87 +3,28 @@
 {% load staticfiles %}
 
 {% block head %}
-    <style type="text/css">
-    .img-upload-inholder{
-        overflow: hidden;
-        width: 132px;
-        height: 31px;
-        background-color: #fff;
-        text-align: center;
-        vertical-align: middle;
-        border-radius: 3px;
-        padding-top: 1px;
-    }
-    .img-upload-inholder:hover{ box-shadow: 0px 0px 10px 0px #f1f1f1; }
-    .img-upload-inholder input[type=file]{
-        margin-top: -65px;
-        margin-left: -410px;
-        -moz-opacity: 0;
-        opacity: 0;
-        filter: alpha(opacity=0);
-        font-size: 150px;
-        height: 98px;
-    }
-    .attach-container{
-        position: relative;
-        overflow: hidden;
-        height: 160px;
-        margin-bottom: 10px;
-    }
-    .attach-container img {
-        width: 140px;
-    }
-    .attach-container label {
-        position: absolute;
-        left: 200px;
-    }
-    .attach-container input[name=author]{
-        position: absolute;
-        top: 0px;
-        left: 280px;
-    }
-    .attach-container textarea{
-        position: absolute;
-        top: 40px;
-        left: 280px;
-        width: 400px;
-        height: 50px;
-    }
-    input[type=text].warning,
-    textarea.warning {
-        border: 1px solid #fed0d0;
-        background-color: #fdf9f9;
-    }
-    .attach-container .lb-attach-author { top: 3px;}
-    .attach-container .lb-attach-descr { top: 43px;}
-    .attach-container a.btn { position: absolute; top: 110px; }
-    .attach-container a.btn-attach-save {left: 280px; }
-    .attach-container a.btn-attach-cancel {position: absolute; left: 390px; top: 110px;}
-    .ifr-hidden {
-        width: 1px;
-        height: 1px;
-        border: 0 solid #FFF;
-    }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/admin_albums.css' %}">
 {% endblock %}
 {% block content %}
-<h4>Загрузка фотографий в альбом</h4>
-    <div>
-        <form id="upload-frm" action="{% url 'management:albums_upload_recieve' album.id %}" method="post" target="" enctype="multipart/form-data">
+<h4>Загрузка фотографий в альбом '{{ album.title }}'</h4>
+    <div style="display: none;"><small>Для начала выберите файл, а пока он загружается укажите автора и описание изображения, после чего нажмите "Сохранить" чтобы добавить изображение в альбом.</small></div>
+    <div class="upload-frm-container">
+        <div><form id="upload-frm" action="{% url 'management:albums_upload_recieve' album.id %}" method="post" target="" enctype="multipart/form-data">
             <fieldset>
                 <div class="img-upload-inholder">
-                    <button class="btn">Загрузить файл</button>
+                    <button class="btn btn-primary btn-small">Загрузить файл</button>
                     <input name='userfile' type='file' size='1' maxlength='1'>
                 </div>
                 {% csrf_token %}
                 <input type="hidden" name="request_id" />
             </fieldset>
         </form>
+        </div>
+        <div><a href="{% url 'management:albums_edit' album.id %}" class="btn btn-small">&larr; Вернуться к альбому</a></div>
     </div>
     <div class="uploads-container"></div>
     <div class="iframes-container"></div>
     <script type="text/javascript">
-
     function onUploadComplete(code, rid, uid, thumb_url){
         $('form#upload-frm').attr('target', '').find('input[name=request_id]').val('');
         var csrf = $('input[name=csrfmiddlewaretoken]').val();
@@ -140,7 +81,6 @@
                     app.log('deleted ' + uid);
             }).end();
     }
-
     $(document).ready(function(){
         $('form#upload-frm input[type=file]').on('change', function(){
             var uuid = app.genUuid();
@@ -153,7 +93,6 @@
             $('div.uploads-container').append(_.template($('#uploaded-attach-tpl').html(), {'request_id' : uuid}));
         });
     });
-
     </script>
 <script type="text/template" id="iframe-tpl">
     <iframe class="ifr-hidden" src='' id='<%= iframe_id %>' name='<%= iframe_id %>'></iframe>

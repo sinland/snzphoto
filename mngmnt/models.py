@@ -20,3 +20,7 @@ class MemberForm(forms.Form):
 class AlbumEditForm(forms.Form):
     title = forms.CharField(max_length=256)
     description = forms.CharField(max_length=2048, widget=forms.Textarea)
+
+class PhotoEditForm(forms.Form):
+    author = forms.CharField(max_length=512)
+    description = forms.CharField(max_length=4*1024)
