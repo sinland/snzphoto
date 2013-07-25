@@ -1,0 +1,119 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/jquery.cleditor.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+    <style type="text/css">
+        form#post-form textarea {
+            width: 400pt;
+            height: 80pt;
+            border-radius: 0;
+        }
+        form#post-form input[type=text]{
+            width: 400pt;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    {% if form.title.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.title.errors %}Заголовок: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.text.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.text.errors %}Описание: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.link.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.link.errors %}Ссылка: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.uid.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.uid.errors %}Адрес: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    <form id="post-form" action="" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>Свойства видео</legend>
+            <div class="control-group">
+                <label class="control-label">Адрес: </label>
+                <div class="controls">
+                    {{ form.uid }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Заголовок: </label>
+                <div class="controls">
+                    {{ form.title }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Описание: </label>
+                <div class="controls">
+                    {{ form.text }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Ссылка: </label>
+                <div class="controls">
+                    {{ form.link }}
+                    <div class="link-preview"></div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input type="button" class='btn btn-primary' value="Просмотр">
+                    <input type="button" class='btn btn-cancel' value="Отмена">
+                </div>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+    <script type="text/javascript">
+        function showPreviewClickHandler(e){
+            e.preventDefault();
+
+            var self = $(this);
+            var link = $('textarea[name=link]');
+            if(link.val().length == 0){
+                return;
+            }
+            link.hide();
+            $('div.link-preview').html(link.val()).show();
+
+            self.unbind('click', showPreviewClickHandler).bind('click', submitFormClickHandler).val('Сохранить');
+            $('.btn-cancel').unbind('click', leavePage).bind('click', restoreViewClickHandler).val('Редактировать');
+        }
+        function restoreViewClickHandler(e){
+            e.preventDefault();
+            $('.btn-primary').unbind('click', submitFormClickHandler).bind('click', showPreviewClickHandler).val('Просмотр');
+            $('.btn-cancel').unbind('click', restoreViewClickHandler).bind('click', leavePage).val('Отмена');
+            $('div.link-preview').hide().html('');
+            $('textarea[name=link]').show();
+        }
+        function submitFormClickHandler(e){
+            e.preventDefault();
+            $('form#post-form').submit();
+        }
+        function leavePage(e){
+            document.location='{% url 'management:video_index' %}';
+        }
+        $(document).ready(function(){
+            $('.btn-primary').on('click', showPreviewClickHandler);
+            $('.btn-cancel').bind('click', leavePage);
+            $("textarea[name=text]").cleditor({
+                width: 545,
+                height: 100,
+                controls: "bold italic underline strikethrough link unlink"
+            });
+        });
+    </script>
+{% endblock %}

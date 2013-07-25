@@ -57,7 +57,6 @@ class NewsPostComment(models.Model):
     author_name = models.TextField(max_length=256)
     msg = models.TextField(max_length=1024)
 
-
 class NewsCommentForm(forms.Form):
     author_name = forms.CharField(max_length=256, label=u'Имя')
     msg = forms.CharField(max_length=256, label=u'Текст')

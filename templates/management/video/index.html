@@ -2,5 +2,55 @@
 {% load url from future %}
 
 {% block content %}
-    Page 'Videos' under construction
+    <a href="{% url 'management:video_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Добавить видео</a>
+    {% if videos|length > 0 %}
+        <div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Заголовок</th>
+                    <th>Автор</th>
+                    <th>Дата создания</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in videos %}
+                    <tr>
+                        <td><a href="{% url 'management:video_delete' post.id  %}"><i class="icon-trash ico-close"></i></a>&nbsp;
+                            <a href="{% url 'management:video_edit' post.id  %}"><i class="icon-edit ico-close"></i></a></td>
+                        <td><a href="{% url 'management:video_edit' post.id  %}">{{ post.title }}</a></td>
+                        <td>{{ post.author }}</td>
+                        <td>{{ post.creation_date|date:"d.m.Y в H:i" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if videos.paginator.num_pages > 1 %}
+            <div class="pagination pagination-small">
+                <ul>
+                    {% if videos.has_previous %}
+                        <li><a href="{% url 'management:video_paged_index' videos.previous_page_number %}"><i class="icon-arrow-left"></i></a></li>
+                    {% endif %}
+                    {% for p in videos.paginator.page_range %}
+                        <li><a href="{% url 'management:video_paged_index' p %}">
+                            {% if p == videos.number %}
+                                <b>{{ p }}</b>
+                            {% else %}
+                                {{ p }}
+                            {% endif %}
+                        </a></li>
+                    {% endfor %}
+                    {% if videos.has_next %}
+                        <li><a href="{% url 'management:video_paged_index' videos.next_page_number %}"><i class="icon-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+        <div>Всего записей: {{ total_count }}</div>
+        <div class="clearfix">&nbsp;</div>
+    {% else %}
+        <div style="margin: 10px;">Записей нет</div>
+    {% endif %}
 {% endblock %}

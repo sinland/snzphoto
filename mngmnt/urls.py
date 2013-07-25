@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     url(r'^news/$', news_views.index, name='news_index'),
     url(r'^news/page/(?P<page>\d+)$', news_views.index, name='news_paged_index'),
     url(r'^news/add/$', news_views.add_article, name='news_add'),
-    url(r'^news/(?P<news_id>\d+)/edit/$', news_views.edit_article, name='news_edit'), # get = read, post = update
+    url(r'^news/(?P<news_id>\d+)/edit/$', news_views.edit_article, name='news_edit'),
     url(r'^news/(?P<news_id>\d+)/delete/$', news_views.delete_article, name='news_delete'),
     url(r'^news/upload-attach/$', news_views.attachment_upload, name='news_media_reciever'),
     url(r'^news/delete-attach/$', news_views.attachment_remove, name='news_media_eraser'),
@@ -27,6 +27,9 @@ urlpatterns = patterns('',
 
     url(r'^video/$', video_views.index, name='video_index'),
     url(r'^video/page/(?P<page>\d+)$', video_views.index, name='video_paged_index'),
+    url(r'^video/add/$', video_views.add_article, name='video_add'),
+    url(r'^video/(?P<id>\d+)/edit/$', video_views.edit_article, name='video_edit'),
+    url(r'^video/(?P<id>\d+)/delete/$', video_views.delete_article, name='video_delete'),
 
     url(r'^debates/$', debates_views.index, name='debates_index'),
     url(r'^debates/page/(?P<page>\d+)$', debates_views.index, name='debates_paged_index'),

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import never_cache
@@ -32,6 +34,7 @@ def show_post(r, post_uid):
     if 'last_viewed_newspage' in r.COOKIES:
         response.delete_cookie('last_viewed_newspage')
     return response
+
 
 @never_cache
 def get_comments(request, pid):
@@ -77,4 +80,5 @@ def add_comment(request, pid):
 
 @never_cache
 def delete_comment(request, pid):
+    # todo: реализовать удаление комментариев к новости
     return None

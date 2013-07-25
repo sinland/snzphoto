@@ -20,7 +20,7 @@ def translit(msg):
             u'ж' : 'jh',
             u'з' : 'z',
             u'и' : 'i',
-            u'й' : 'yi',
+            u'й' : 'y',
             u'к' : 'k',
             u'л' : 'l',
             u'м' : 'm',
@@ -33,7 +33,8 @@ def translit(msg):
             u'у' : 'u',
             u'ф' : 'f',
             u'х' : 'h',
-            u'ц' : 'c',
+            u'ц' : 'ts',
+            u'ч' : 'ch',
             u'ш' : 'sh',
             u'щ' : 'sch',
             u'ъ' : '',
@@ -62,3 +63,24 @@ def get_json_response(code, values = {} , message = ''):
     values['message'] = message
     return HttpResponse(json.dumps(values))
 
+"""
+parsing link to shared video to find 'iframe' or 'object' tags. returns reconstructured tags
+"""
+def clean_embedded_video_link(link):
+    clean_tag = ""
+    iframe = re.search(r'<iframe(?P<args>[^>]+)>(?:.*)</iframe>', link, flags=re.I)
+    obj = re.match(r'<object(?P<attrs>[^>]+)>(?P<args>.*)</object>', link, flags=re.I)
+    if iframe:
+        clean_tag = "<iframe %s></iframe>" % iframe.group('args').strip()
+        #src = re.search('src=[\'|"]+(.+)[\'|"]+', args)
+    elif obj:
+        clean_tag = "<object %s>" % obj.group('attrs').strip()
+        obj_args = obj.group('args')
+        params = re.findall('<param(?P<attrs>[^>]+)>(?:.*)</param>', obj_args)
+        for param in params:
+            clean_tag += "<param %s></param>" % param.strip()
+        embed = re.search('<embed(?:\s*)(?P<attrs>[^>]+)>(?:.*)</embed>', obj_args)
+        if embed:
+            clean_tag += "<embed %s></embed>" % embed.group('attrs')
+        clean_tag += "</object>"
+    return clean_tag

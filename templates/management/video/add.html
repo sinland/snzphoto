@@ -1,0 +1,109 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/jquery.cleditor.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+    <style type="text/css">
+    form#post-add-form textarea {
+        width: 400pt;
+        height: 80pt;
+        border-radius: 0;
+    }
+    form#post-add-form input[type=text]{
+        width: 400pt;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    {% if form.title.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.title.errors %}Заголовок: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.text.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.text.errors %}Описание: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    {% if form.link.errors %}
+        <div class='alert alert-error'>
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {% for e in form.link.errors %}Ссылка: {{ e }}<br>{% endfor %}
+        </div>
+    {% endif %}
+    <form id="post-add-form" action="" method="post" class="form-horizontal">
+        <fieldset>
+            <legend>Новое видео</legend>
+            <div class="control-group">
+                <label class="control-label">Заголовок: </label>
+                <div class="controls">
+                    {{ form.title }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Описание: </label>
+                <div class="controls">
+                    {{ form.text }}
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Ссылка: </label>
+                <div class="controls">
+                    {{ form.link }}
+                    <div class="link-preview"></div>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input type="button" class='btn btn-primary' value="Просмотр">
+                    <input type="button" class='btn btn-cancel' value="Отмена">
+                </div>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+    <script type="text/javascript">
+        function showPreviewClickHandler(e){
+            e.preventDefault();
+
+            app.log('preview...');
+            var self = $(this);
+            var link = $('textarea[name=link]');
+            if(link.val().length == 0){
+                return;
+            }
+
+            $('div.link-preview').html(link.val()).show();
+            link.hide();
+
+            self.unbind('click', showPreviewClickHandler).bind('click', submitFormClickHandler).val('Сохранить');
+            $('.btn-cancel').unbind('click', leavePage).bind('click', restoreViewClickHandler).val('Редактировать');
+        }
+        function restoreViewClickHandler(e){
+            e.preventDefault();
+            $('.btn-primary').unbind('click', submitFormClickHandler).bind('click', showPreviewClickHandler).val('Просмотр');
+            $('.btn-cancel').unbind('click', restoreViewClickHandler).bind('click', leavePage).val('Отмена');
+            $('div.link-preview').hide().html('');
+            $('textarea[name=link]').show();
+        }
+        function submitFormClickHandler(e){
+            e.preventDefault();
+            $('form#post-add-form').submit();
+        }
+        function leavePage(e){
+            document.location='{% url 'management:video_index' %}';
+        }
+        $(document).ready(function(){
+            $('.btn-primary').on('click', showPreviewClickHandler);
+            $('.btn-cancel').bind('click', leavePage);
+            $("textarea[name=text]").cleditor({
+                width: 545,
+                height: 100,
+                controls: "bold italic underline strikethrough link unlink"
+            });
+        });
+    </script>
+{% endblock %}

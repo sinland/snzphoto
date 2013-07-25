@@ -34,7 +34,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="navigation"><a href="{%  url 'news:index' %}">Новости</a> | <a href="{% url 'photos:index' %}">Фото</a> | <a href="#">Видео</a></div>
+    <div class="navigation"><a href="{%  url 'news:index' %}">Новости</a> | <a href="{% url 'photos:index' %}">Фото</a> | <a href="{% url 'videos:index' %}">Видео</a></div>
     {% block content %}{% endblock %}
     <div class='footer'>
         Подвал

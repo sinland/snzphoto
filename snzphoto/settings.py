@@ -196,4 +196,4 @@ LOGGING = {
     }
 }
 
-NEWS_PER_PAGE = 3
+NEWS_PER_PAGE = 10

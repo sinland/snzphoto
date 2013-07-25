@@ -24,3 +24,9 @@ class AlbumEditForm(forms.Form):
 class PhotoEditForm(forms.Form):
     author = forms.CharField(max_length=512)
     description = forms.CharField(max_length=4*1024)
+
+class VideoPostForm(forms.Form):
+    title = forms.CharField(max_length=256)
+    text = forms.CharField(widget=forms.Textarea)
+    link = forms.CharField(max_length=1024, widget=forms.Textarea)
+    uid = forms.CharField(max_length=256, required=False)

@@ -8,15 +8,13 @@
 {% block content %}
     <h1>{{ post.title }}</h1>
     <div>{{ post.text|safe }}</div>
-    {% if post.enclosure %}
-        <div><img src="{{ post.attach_full_url }}" alt="Attach"></div>
-    {% endif %}
+    <div>{{ post.link|safe }}</div>
     <div style="margin: 10px 10px 10px 0px;">
-        <input type="button" value="&larr;&nbsp;Назад к новостям" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
+        <input type="button" value="&larr;&nbsp;Назад к видео" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'videos:paged_index' return_page %}{% else %}{% url 'videos:index' %}{% endif %}'">
     </div>
     <h4>Комментарии</h4>
     <div class='post-comments'></div>
-    <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
+    <form id="frm-comment" action="{% url 'videos:add_comment' post.id %}" method="post">
         <legend>Добавить комментарий</legend>
         <fieldset>
             <div style="position: relative;">
@@ -47,14 +45,14 @@
                 return;
             }
 
-            $.post('{% url 'news:add_comment' post.id %}', {'author_name' : author, 'msg' : msg, 'csrfmiddlewaretoken' : csrf}, function(){
+            $.post('{% url 'videos:add_comment' post.id %}', {'author_name' : author, 'msg' : msg, 'csrfmiddlewaretoken' : csrf}, function(){
                 var tpl = _.template($('#comment-template').html());
                 $('div.post-comments').prepend(tpl({'author_name' : author, 'msg' : msg}));
                 $('textarea[name=msg]').val('')
             });
         }
         $(document).ready(function(){
-            $.getJSON('{% url 'news:get_comments' post.id %}', function(data){
+            $.getJSON('{% url 'videos:get_comments' post.id %}', function(data){
                 if(data.code == 200){
                     var tpl = _.template($('#comment-template').html());
                     var cmdiv = $('div.post-comments');

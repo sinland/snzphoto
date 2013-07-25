@@ -27,7 +27,7 @@
             <input name="author" type="text" value="{{ photo.author }}">
             <label class="lb-attach-descr">Описание:</label>
             <textarea name="description">{{ photo.description }}</textarea>
-            <a href="#" class="btn btn-attach-save">Сохранить</a>
+            <a href="#" class="btn btn-primary btn-attach-save">Сохранить</a>
             <a href="{% url 'management:albums_edit' album.id %}" class="btn btn-attach-cancel">Отмена</a>
         </div>
     </div>
