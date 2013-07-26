@@ -24,7 +24,7 @@
                             <a href="{% url 'management:member_edit' member.id %}"><i class="icon-edit ico-close"></i></a>
                         </td>
                         <td>{{ member.get_full_name }}</td>
-                        <td>{{ member.username }}</td>
+                        <td><a href="{% url 'management:member_edit' member.id %}">{{ member.username }}</a></td>
                         <td>{{ member.date_joined|date:"d.m.Y в H:i" }}</td>
                         <td>{% if member.is_staff %}Да{% else %}Нет{% endif %}</td>
                         <td>{% if member.is_active %}Да{% else %}Нет{% endif %}</td>

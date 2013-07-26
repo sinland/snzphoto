@@ -14,7 +14,7 @@ class NewsPost(models.Model):
     title = models.CharField(max_length=256)
     text = models.TextField()
     enclosure = models.CharField(max_length=256, blank=True)
-    uid = models.CharField(max_length=128, unique=True)
+    uid = models.CharField(max_length=256, unique=True)
 
     class Meta:
         db_table = "newsposts"

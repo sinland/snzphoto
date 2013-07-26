@@ -2,7 +2,9 @@
 
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage as fs
+from django.core.urlresolvers import reverse
 from django.db import models
+from snzphoto.utils import translit
 
 class PhotoAlbum(models.Model):
     class Meta:
@@ -20,6 +22,9 @@ class PhotoAlbum(models.Model):
 
     def get_photos(self):
         return Photo.objects.filter(album=self)
+
+    def get_absolute_url(self):
+        return reverse('news:show_post', kwargs={'post_uid' : self.uid})
 
 class Photo(models.Model):
     class Meta:

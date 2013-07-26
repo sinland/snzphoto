@@ -5,14 +5,15 @@
 <html lang="ru">
 <head>
     <title>{% block page_title %}Снеж-Фото{% endblock %}</title>
+    <noscript><meta http-equiv='refresh' content='0; url=/badbrowser.html'> </noscript>
     <script type="text/javascript" src={% static 'js/jquery-1.8.3.min.js' %}></script>
     <script type="text/javascript" src={% static 'js/underscore-min.js' %}></script>
     <script type="text/javascript" src={% static 'js/app.js' %}></script>
-    {% block head %}{% endblock %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    {% if debug %}
+    {% block head %}{% endblock %}
+    {% if is_debug %}
         <script type="text/javascript">
             app.loggerActive(true);
         </script>
@@ -23,14 +24,39 @@
     <div class='header' style='position: relative; height: 100px;'>
         <div><h1>Заголовок</h1></div>
         <div class='user_panel' style='float: right; margin-top: 20px; margin-right : 20px; text-align: right;'>
-            {% if user and user.is_anonymous %}
+            {% if user.is_authenticated %}
+                {{ user.username }} <a href="{% url 'management:index' %}">[Панель управления]</a> <a href="{% url 'logout_handler' %}">[Выход]</a>
+            {% else %}
                 {% csrf_token %}
-                <input type="text" name="login"><br>
-                <input type="password" name="password"><br>
-                <a href="#" id="btn_login" class="btn btn-small">Login</a>
-                <script type="text/javascript">var logged = false;</script>
-            {% elif user and not user.is_anonymous %}
-                <script type="text/javascript">var logged = true;</script>
+                <input type="text" name="login" style="width: 120px;"><br>
+                <input type="password" name="password" style="width: 120px;"><br>
+                <a href="#" id="btn_login" class="btn btn-mini">Вход</a>
+                <script type="text/javascript">
+                    function loginButtonClickHandlder(e){
+                        e.preventDefault();
+                        var login = $('input[name=login]').val();
+                        var pass = $('input[name=password]').val();
+                        var csrf = $('input[name=csrfmiddlewaretoken]').val();
+                        if(login.length < 1 || pass.length < 1){
+                            return;
+                        }
+                        $.post('{% url 'login_handler' %}', {'login' : login, 'pwd' : pass, 'csrfmiddlewaretoken' : csrf}, function(data){
+                            var result = JSON.parse(data);
+                            if(result.code == 0){
+                                document.location='{% url 'news:index' %}';
+                            }
+                            else{
+                                $('input[name=login]').val('');
+                                $('input[name=password]').val('');
+                                // todo: заменить alert на приятный popup
+                                alert("Ошибка: Указано неверное имя пользователя или пароль!");
+                            }
+                        });
+                    }
+                    $(document).ready(function(){
+                        $('#btn_login').click(loginButtonClickHandlder);
+                    });
+                </script>
             {% endif %}
         </div>
     </div>
@@ -40,42 +66,5 @@
         Подвал
     </div>
 </div>
-
-<script type='text/plain' id="logged_user_panel" >
-    <%= username %> <a href="{% url 'management:index' %}">[Панель управления]</a> <a href="{% url 'logout_handler' %}">[Выход]</a>
-</script>
-
-<script type="text/javascript">
-    $(document).ready(function(){
-      var show_user_panel = function(args){
-          var tmlSource = $('#logged_user_panel').html();
-          var tml = _.template(tmlSource, args);
-          $('div.user_panel').html(tml);
-      };
-      if(logged) show_user_panel({ username : '{{ user.username }}' });
-      else{
-          $('#btn_login').click(function(e){
-              e.preventDefault();
-              var login = $('input[name=login]').val();
-              var pass = $('input[name=password]').val();
-              var csrf = $('input[name=csrfmiddlewaretoken]').val();
-              if(login.length < 1 || pass.length < 1){
-                  return;
-              }
-              $.post('{% url 'login_handler' %}', {'login' : login, 'pwd' : pass, 'csrfmiddlewaretoken' : csrf}, function(data){
-                  var result = JSON.parse(data);
-                  if(result.code == 0){
-                      show_user_panel({ username : result.username });
-                  }
-                  else{
-                      $('input[name=login]').val('');
-                      $('input[name=password]').val('');
-                      alert(result.message);
-                  }
-              });
-          });
-      }
-    });
-</script>
 </body>
 </html>

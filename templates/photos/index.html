@@ -5,7 +5,7 @@
     {% if albums|length > 0 %}
         {% for album in albums %}
             <div class='album-post'>
-                <a href="{% url 'photos:details' album.id %}">{{ album.title|upper }}</a> ({{ album.author|capfirst }}; {{ album.creation_date|date:"d.m.Y в H:i" }})<br/>
+                <a href="{% url 'photos:details' album.id %}">{{ album.title|upper }}</a> <small>({{ album.author }} | {{ album.creation_date|date:"d.m.Y в H:i" }} | {{ album.photos_count }} фото)</small><br/>
                 <span>{{ album.description|safe|truncatewords_html:20 }}</span>
             </div>
         {% endfor %}

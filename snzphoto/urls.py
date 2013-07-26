@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^management/', include('mngmnt.urls', namespace='management')),
     url(r'^login/$', ajax.login_handler, name='login_handler'),
     url(r'^logout/$', views.logout_action, name='logout_handler'),
+    url(r'^badbrowser.html$', views.bad_browser, name='bad_browser')
 )
 
 #handler404 = 'snzphoto.views.page_not_found'

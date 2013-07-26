@@ -3,25 +3,96 @@
 {% load staticfiles %}
 {% block head %}
     <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
+    <script type="text/javascript" src={% static 'js/lightbox.js' %}></script>
     <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
+    <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
+    <script type="text/javascript">
+        var page = { }
+
+        function onCommentSubmit(){
+            var author = $('input[name=author_name]').val();
+            var msg = $('textarea[name=msg]').val();
+            var csrf = $('input[name=csrfmiddlewaretoken]').val();
+            if(author.length == 0 || msg.length == 0){
+                return;
+            }
+            $.post(page.add_comment_url, {'author_name' : author, 'msg' : msg, 'csrfmiddlewaretoken' : csrf}, function(response){
+                var data = $.parseJSON(response);
+                if(data.code == 200){
+                    var tpl = _.template($('#comment-template').html());
+                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid})).prependTo(page.comments_div);
+                {% if user.id == post.author.id %}
+                    comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
+                {% endif %}
+                    page.comments_div.fadeIn(300);
+                    try{
+                        page.editor.clear();
+                    }
+                    catch(e) {
+                        app.error(e.message)
+                    }
+                }
+                else {
+                    app.error('Failed to add comment. code: ' + data.code + ';' + data.message);
+                }
+            });
+        }
+        {% if user.id == post.author.id %}
+            function onDeleteCommentClick(e){
+                e.preventDefault();
+                var csrf = $('input[name=csrfmiddlewaretoken]').val();
+                var container = $(this).parents('div.comment');
+                $.post(page.del_comment_url, {'cid' : container.attr('data-cid'),  'csrfmiddlewaretoken' : csrf}, function(response){
+                    var data = $.parseJSON(response);
+                    if(data.code == 200){
+                        container.fadeOut(300, function(){
+                            container.remove();
+                            if(page.comments_div.find('div.comment').length == 0) page.comments_div.fadeOut(300);
+                        });
+                    } else {
+                        app.error('Failed to delete comment. code: ' + data.code + '; ' + data.message);
+                    }
+                });
+            }
+        {% endif %}
+        function onGetCommentsComplete(data){
+            if(data.code == 200){
+                var tpl = _.template($('#comment-template').html());
+                for(var i=0;i<data.comments.length;i++){
+                    var obj = $.parseJSON(data.comments[i])
+                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid}));
+                    comment.prependTo(page.comments_div);
+                {% if user.id == post.author.id %}
+                    comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
+                {% endif %}
+                }
+                if(data.comments.length > 0) page.comments_div.fadeIn(200);
+            }
+            else{
+                app.log('get_comments failed. code: ' + data.code + '; message: ' + data.message);
+            }
+        }
+    </script>
 {% endblock %}
 {% block content %}
-    <h1>{{ post.title }}</h1>
-    <div>{{ post.text|safe }}</div>
+    <div class="article-header">{{ post.title }}</div>
+    <div class="article-text">{{ post.text|safe }}</div>
     {% if post.enclosure %}
-        <div><img src="{{ post.attach_full_url }}" alt="Attach"></div>
+        <div class="article-attachment"><a href="{{ post.attach_full_url }}" rel="lightbox" title="Прикрепленное изображение"><img class="img-polaroid" src="{{ post.attach_full_url }}"></a></div>
     {% endif %}
+    <div class="article-underline">{{ post.author }} {{ post.creation_date|date:"H:i d.m.Y" }}</div>
     <div style="margin: 10px 10px 10px 0px;">
         <input type="button" value="&larr;&nbsp;Назад к новостям" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
     </div>
-    <h4>Комментарии</h4>
-    <div class='post-comments'></div>
+    <div class='article-comments' style="display: none;">
+        <div class="article-comments-label">Комментарии</div>
+    </div>
     <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
         <legend>Добавить комментарий</legend>
         <fieldset>
             <div style="position: relative;">
                 <div style='padding-left: 50px;'>
-                    <input type="text" name='author_name' value="{% if user.is_authenticated %}{{ user.username }}{% endif %}" class="">
+                    <input type="text" name='author_name' value="{{ comment_username }}" class="">
                 </div>
                 <label style="position: absolute; left: 0px; top: 5px">Имя</label>
             </div>
@@ -38,51 +109,25 @@
         </fieldset>
     </form>
     <script type="text/javascript">
-        function onCommentSubmit(){
-            var author = $('input[name=author_name]').val();
-            var msg = $('textarea[name=msg]').val();
-            var csrf = $('input[name=csrfmiddlewaretoken]').val();
-            if(author.length == 0 || msg.length == 0){
-                //
-                return;
-            }
-
-            $.post('{% url 'news:add_comment' post.id %}', {'author_name' : author, 'msg' : msg, 'csrfmiddlewaretoken' : csrf}, function(){
-                var tpl = _.template($('#comment-template').html());
-                $('div.post-comments').prepend(tpl({'author_name' : author, 'msg' : msg}));
-                $('textarea[name=msg]').val('')
-            });
-        }
         $(document).ready(function(){
-            $.getJSON('{% url 'news:get_comments' post.id %}', function(data){
-                if(data.code == 200){
-                    var tpl = _.template($('#comment-template').html());
-                    var cmdiv = $('div.post-comments');
-                    for(var i=0;i<data.comments.length;i++){
-                        var obj = $.parseJSON(data.comments[i])
-                        cmdiv.prepend(tpl({'author_name' : obj.author_name, 'msg' : obj.msg}));
-                    }
-                }
-                else{
-                    app.log('get_comments failed. code: ' + data.code + '; message: ' + data.message);
-                }
-            });
-            $("textarea[name=msg]").cleditor({
+            page.add_comment_url = '{% url 'news:add_comment' post.id %}';
+            page.del_comment_url = '{% url 'news:delete_comment' post.id %}';
+            page.comments_div = $('div.article-comments');
+            page.editor = $("textarea[name=msg]").cleditor({
                 width: 600,
                 height: 100,
                 controls: "bold italic underline strikethrough link unlink"
-            });
-            {% if user.is_authenticated %}
-            $('input[name=author_name]').val('{{ user.username }}');
-            {% endif %}
+            })[0];
+            $.getJSON('{% url 'news:get_comments' post.id %}', onGetCommentsComplete);
         });
     </script>
-    <div>
-    </div>
     <script type="text/template" id="comment-template">
-        <div style="margin-top: 10px; margin-bottom: 5px;">
-            <div style='background: #eee; padding: 7px; border-radius: 5px;'><%= author_name %></div>
-            <div style='padding: 10px;'><%= msg %></div>
+        <div class="comment" data-cid="<%= cid %>">
+            <div class="comment-header">
+                <b><%= author_name %>&nbsp;</b>
+                {% if user.id == post.author.id %}<small><a class="comment-delete-link" href="#">удалить</a></small>{% endif %}
+            </div>
+            <div class="comment-body"><%= msg %></div>
         </div>
     </script>
 {% endblock %}

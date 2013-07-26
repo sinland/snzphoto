@@ -12,7 +12,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.cache import never_cache
 from django.core.files.storage import default_storage as fs
-from django.core.cache import cache
 from django.utils.html import escape
 from mngmnt.models import *
 from photos.models import *
@@ -190,7 +189,7 @@ def upload_photo_handler(request, aid):
         log.error("Failed to create thumbnail '%s'. %s" % (img_thumb_file, err.message))
         fs.save(img_thumb_file, f)
 
-    cache.set(uid, (img_file, img_thumb_file))
+    request.session[uid] = (img_file, img_thumb_file)
 
     return get_script_response(200, rid, uid, fs.url(img_thumb_file))
 
@@ -204,9 +203,9 @@ def upload_photo_delete(request, aid):
         if 'uid' in request.POST:
             uid = request.POST['uid']
             if re.match('^[a-zA-Z0-9]+$', uid):
-                trash = cache.get(uid)
+                trash = request.session[uid]
                 if trash is not None:
-                    cache.delete(uid)
+                    del  request.session[uid]
                     for f in trash:
                         if fs.exists(f):
                             try:
@@ -237,13 +236,13 @@ def upload_photo_save(request, aid):
         return get_json_response(code=400, message=u'UID expected')
     uid = request.POST['uid']
     if re.match('^[a-zA-Z0-9]+$', uid) is None:
-        response = get_json_response(code=400, message=u'Bad filename')
+        return get_json_response(code=400, message=u'Bad filename')
 
-    uploads = cache.get(uid)
+    uploads = request.session[uid]
     if uploads is None:
         return get_json_response(code=400, message=u'Request not found by token ID')
 
-    cache.delete(uid)
+    del request.session[uid]
     uploaded_file = uploads[0]
     uploaded_thumb = uploads[1]
     if not fs.exists(uploaded_file) or not fs.exists(uploaded_thumb):

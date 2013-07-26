@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
+
 __author__ = 'PervinenkoVN'
 
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponse
 import re
 import json
-
 
 def login_handler(r):
     if r.method != 'POST':

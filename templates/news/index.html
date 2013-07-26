@@ -8,18 +8,20 @@
             <span>{{ news.text|safe|truncatewords_html:10 }}</span>
         </div>
     {% endfor %}
-    <div class="pagination">
-    <span class="step-links">
-        {% if view_news.has_previous %}
-            <a href="{% url 'news:paged_index' view_news.previous_page_number %}">&larr;</a>
-        {% endif %}
+    {% if view_news.paginator.num_pages > 1 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if view_news.has_previous %}
+                    <a href="{% url 'news:paged_index' view_news.previous_page_number %}">&larr;</a>
+                {% endif %}
 
-        <span class="current">
-            Page {{ view_news.number }} of {{ view_news.paginator.num_pages }}.
-        </span>
-        {% if view_news.has_next %}
-            <a href="{% url 'news:paged_index' view_news.next_page_number %}">&rarr;</a>
-        {% endif %}
-    </span>
-    </div>
+                <span class="current">
+                    Page {{ view_news.number }} of {{ view_news.paginator.num_pages }}.
+                </span>
+                {% if view_news.has_next %}
+                    <a href="{% url 'news:paged_index' view_news.next_page_number %}">&rarr;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
 {% endblock %}
