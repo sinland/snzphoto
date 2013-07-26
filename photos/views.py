@@ -16,6 +16,7 @@ def index(request, page=1):
     except EmptyPage:
         albums = paginator.page(paginator.num_pages)
 
+    section = "photo"
     response = render(request, 'photos/index.html', locals())
     response.set_cookie('last_viewed_gallerypage', page)
     return response
@@ -34,5 +35,6 @@ def details(request, id, pid=-1):
     return render(request, 'photos/album_details.html', {
         'last_viewed_gallerypage' : last_viewed_gallerypage,
         'album' : album,
-        'photo' : photo
+        'photo' : photo,
+        'section' : "photo"
     })

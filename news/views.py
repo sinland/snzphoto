@@ -21,12 +21,14 @@ def index(r, page='1'):
     except EmptyPage:
         view_news = paginator.page(paginator.num_pages)
 
+    section = 'news'
     response = render(r, 'news/index.html', locals())
     response.set_cookie('last_viewed_newspage', page)
     return response
 
 @never_cache
 def show_post(r, post_uid):
+    section = 'news'
     post = get_object_or_404(NewsPost, uid=post_uid)
     if 'last_viewed_newspage' in r.COOKIES:
         try:
@@ -59,7 +61,6 @@ def get_comments(request, pid):
                     'cid': c.id
                     }
             ))
-
         respsonse = get_json_response(code=200, values={'comments' : arr})
     except NewsPost.DoesNotExist:
         respsonse = get_json_response(code=404, message='Post not found')

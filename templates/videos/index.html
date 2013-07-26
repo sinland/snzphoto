@@ -13,18 +13,18 @@
         {% endfor %}
         {% if articles.paginator.num_pages > 1 %}
             <div class="pagination">
-        <span class="step-links">
-            {% if articles.has_previous %}
-                <a href="{% url 'videos:paged_index' articles.previous_page_number %}">&larr;</a>
-            {% endif %}
+                <span class="step-links">
+                    {% if articles.has_previous %}
+                        <a href="{% url 'videos:paged_index' articles.previous_page_number %}">&larr;</a>
+                    {% endif %}
 
-            <span class="current">
-                Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
-            </span>
-            {% if articles.has_next %}
-                <a href="{% url 'videos:paged_index' articles.next_page_number %}">&rarr;</a>
-            {% endif %}
-        </span>
+                    <span class="current">
+                        Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
+                    </span>
+                    {% if articles.has_next %}
+                        <a href="{% url 'videos:paged_index' articles.next_page_number %}">&rarr;</a>
+                    {% endif %}
+                </span>
             </div>
         {% endif %}
     {% endif %}

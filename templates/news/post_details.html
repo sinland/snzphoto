@@ -6,9 +6,10 @@
     <script type="text/javascript" src={% static 'js/lightbox.js' %}></script>
     <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
     <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/news.css' %}">
+
     <script type="text/javascript">
         var page = { }
-
         function onCommentSubmit(){
             var author = $('input[name=author_name]').val();
             var msg = $('textarea[name=msg]').val();
@@ -121,6 +122,7 @@
             $.getJSON('{% url 'news:get_comments' post.id %}', onGetCommentsComplete);
         });
     </script>
+
     <script type="text/template" id="comment-template">
         <div class="comment" data-cid="<%= cid %>">
             <div class="comment-header">

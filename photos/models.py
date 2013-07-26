@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import random
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage as fs
 from django.core.urlresolvers import reverse
@@ -22,6 +22,34 @@ class PhotoAlbum(models.Model):
 
     def get_photos(self):
         return Photo.objects.filter(album=self)
+
+    def get_random_photo_url(self):
+        total = self.photos_count()
+        photo = fs.url('gallery/blank.png')
+        if total > 0:
+            indx = random.randint(0, self.photos_count() - 1)
+            photo = self.get_photos()[indx].get_thumb_url()
+        return photo
+
+    def get_random_pics_url(self):
+        pics_count = 3
+        total = self.photos_count()
+        if total == 0:
+            return []
+        if total < pics_count:
+            pics_count = total
+
+        result = []
+        for i in range(pics_count):
+            for j in range(total):
+                indx = random.randint(0, total - 1)
+                pic = self.get_photos()[indx].get_thumb_url()
+                try:
+                    result.index(pic)
+                except ValueError:
+                    result.append(pic)
+                    break
+        return result
 
     def get_absolute_url(self):
         return reverse('news:show_post', kwargs={'post_uid' : self.uid})

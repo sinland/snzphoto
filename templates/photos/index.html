@@ -1,12 +1,27 @@
 {% extends "photos/base_photos.html" %}
 {% load url from future %}
-
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+{% endblock %}
 {% block content %}
     {% if albums|length > 0 %}
         {% for album in albums %}
-            <div class='album-post'>
-                <a href="{% url 'photos:details' album.id %}">{{ album.title|upper }}</a> <small>({{ album.author }} | {{ album.creation_date|date:"d.m.Y в H:i" }} | {{ album.photos_count }} фото)</small><br/>
-                <span>{{ album.description|safe|truncatewords_html:20 }}</span>
+            <div class='photoalbum'>
+                <div class="photoalbum-title"><a href="{% url 'photos:details' album.id %}">{{ album.title }}</a></div>
+                <div class="photoalbum-underline">{{ album.author }} | {{ album.creation_date|date:"d.m.Y в H:i" }} | {{ album.photos_count }} фото</div>
+                <div class="photoalbum-summary">
+{#                    <img src="{% static 'img/blank.png' %}" alt="">#}
+                    {% for url in album.get_random_pics_url %}
+                        <img src="{{ url }}">
+                    {% endfor %}
+                    <div class="description">
+                        {{ album.description|safe|truncatewords_html:100 }}
+                        <a href="{% url 'photos:details' album.id %}" class="btn btn-mini">Открыть...</a>
+                    </div>
+
+                </div>
+
             </div>
         {% endfor %}
         {% if albums.paginator.num_pages > 1 %}

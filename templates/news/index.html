@@ -1,11 +1,19 @@
 {% extends "news/base_news.html" %}
 {% load url from future %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/news.css' %}">
+{% endblock %}
 
 {% block content %}
     {% for news in view_news %}
-        <div class='news_post'>
-            <a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a> ({{ news.author.username|capfirst }}; {{ news.creation_date|date:"d.m.Y в H:i" }}) ({{ news.comments_count }})<br/>
-            <span>{{ news.text|safe|truncatewords_html:10 }}</span>
+        <div class='article-item'>
+            <div class="article-item-title"><a href="{% url 'news:show_post' news.uid %}">{{ news.title|upper }}</a></div>
+            <div class="article-item-summary">{{ news.text|safe|truncatewords_html:50 }}</div>
+            <a href="{% url 'news:show_post' news.uid %}" class="btn btn-mini">Подробнее...</a>
+            <div class="article-item-underline">{{ news.author.username }} | {{ news.creation_date|date:"d.m.Y в H:i" }} | комментариев: {{ news.comments_count }}</div>
+
         </div>
     {% endfor %}
     {% if view_news.paginator.num_pages > 1 %}

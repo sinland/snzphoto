@@ -20,12 +20,14 @@ def index(r, page='1'):
     except EmptyPage:
         articles = paginator.page(paginator.num_pages)
 
+    section = "video"
     response = render(r, 'videos/index.html', locals())
     response.set_cookie('last_viewed_videospage', page)
     return response
 
 @never_cache
 def show_post(r, post_uid):
+    section = "video"
     post = get_object_or_404(VideoPost, uid=post_uid)
     if 'last_viewed_videospage' in r.COOKIES:
         try:
@@ -39,6 +41,7 @@ def show_post(r, post_uid):
     else:
         comment_username = ""
     response = render(r, 'videos/post_details.html', locals())
+
     if 'last_viewed_newspage' in r.COOKIES:
         response.delete_cookie('last_viewed_videospage')
     return response
