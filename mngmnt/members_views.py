@@ -3,6 +3,7 @@ from django.views.decorators.cache import never_cache, cache_control
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from debates.models import DiscussionPost
 from news.models import NewsPost
 from models import MemberForm
 from photos.models import PhotoAlbum
@@ -138,22 +139,26 @@ def delete(request, mid):
             response = render(request, 'management/members/delete.html', {
                 'section' : 'members',
                 'member' : member,
-                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Новости" созданные этим пользоватем'
+                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Новости" созданные этим пользоватем!'
             })
         elif PhotoAlbum.objects.filter(author=member).count() > 0:
             response = render(request, 'management/members/delete.html', {
                 'section' : 'members',
                 'member' : member,
-                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Галерея" созданные этим пользоватем'
+                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Галерея" созданные этим пользоватем!'
             })
         elif VideoPost.objects.filter(author=member).count() > 0:
             response = render(request, 'management/members/delete.html', {
                 'section' : 'members',
                 'member' : member,
-                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Видео" созданные этим пользоватем'
+                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Видео" созданные этим пользоватем!'
             })
-        elif False: # todo: проверить записи в дискуссиях
-            pass
+        elif DiscussionPost.objects.filter(author=member).count() > 0:
+            response = render(request, 'management/members/delete.html', {
+                'section' : 'members',
+                'member' : member,
+                'error' : u'Невозможно удалить пользователя: удалите записи в разделе "Обсуждения" созданные этим пользоватем!'
+            })
         else:
             member.delete()
             response = redirect('management:members_index')
