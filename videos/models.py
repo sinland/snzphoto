@@ -43,8 +43,8 @@ class VideoPostComment(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     video_post = models.ForeignKey(VideoPost, db_column= 'videopost_id')
     author_name = models.TextField(max_length=256)
-    msg = models.TextField(max_length=512)
+    msg = models.TextField()
 
 class VideoCommentForm(forms.Form):
     author_name = forms.CharField(max_length=256, label=u'Имя')
-    msg = forms.CharField(max_length=512, label=u'Текст')
+    msg = forms.CharField(label=u'Текст')

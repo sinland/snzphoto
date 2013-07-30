@@ -1,6 +1,57 @@
 {% extends 'manager_base.html' %}
 {% load url from future %}
-
+{% block page_title %}Обсуждения{% endblock %}
 {% block content %}
-    Page 'Debates' under construction
+    <h4>Обсуждения</h4>
+    <a href="{% url 'management:debates_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новую запись</a>
+    {% if posts|length > 0 %}
+        <div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Заголовок</th>
+                    <th>Автор</th>
+                    <th>Дата создания</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td><a href="{% url 'management:debates_delete' post.id  %}"><i class="icon-trash ico-close"></i></a>&nbsp;
+                            <a href="{% url 'management:debates_edit' post.id  %}"><i class="icon-edit ico-close"></i></a></td>
+                        <td><a href="{% url 'management:debates_edit' post.id  %}">{{ post.title }}</a></td>
+                        <td>{{ post.author.username }}</td>
+                        <td>{{ post.creation_date|date:"d.m.Y в H:i" }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if posts.paginator.num_pages > 1 %}
+            <div class="pagination pagination-small">
+                <ul>
+                    {% if posts.has_previous %}
+                        <li><a href="{% url 'management:debates_paged_index' posts.previous_page_number %}"><i class="icon-arrow-left"></i></a></li>
+                    {% endif %}
+                    {% for p in posts.paginator.page_range %}
+                        <li><a href="{% url 'management:debates_paged_index' p %}">
+                            {% if p == posts.number %}
+                                <b>{{ p }}</b>
+                            {% else %}
+                                {{ p }}
+                            {% endif %}
+                        </a></li>
+                    {% endfor %}
+                    {% if posts.has_next %}
+                        <li><a href="{% url 'management:debates_paged_index' posts.next_page_number %}"><i class="icon-arrow-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+        <div>Всего новостей: {{ total_count }}</div>
+        <div class="clearfix">&nbsp;</div>
+    {% else %}
+        <div style="padding: 10px;">Записей нет</div>
+    {% endif %}
 {% endblock %}

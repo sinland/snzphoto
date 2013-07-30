@@ -1,0 +1,18 @@
+{% extends 'manager_base.html' %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block content %}
+    <form action="" method="post">
+        <legend>Удаление записи</legend>
+        <fieldset>
+            <div>Удаление записи <b>"{{ post.title }}"</b> автора <b>"{{ post.author.username }}"</b>, созданной {{ post.creation_date|date:"d.m.Y H:i" }}. Уверены, что хотите удалить?</div>
+            <div class="clearfix">&nbsp;</div>
+            <div class="">
+                <button type="submit" class='btn btn-primary'>Да, удалить</button>
+                <button type="button" class='btn' onclick="javascript:document.location='{% url 'management:news_index' %}'" >Отмена</button>
+            </div>
+            {% csrf_token %}
+        </fieldset>
+    </form>
+{% endblock %}

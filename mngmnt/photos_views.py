@@ -8,8 +8,10 @@ import hashlib
 import datetime
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.views.decorators.cache import never_cache
 from django.core.files.storage import default_storage as fs
 from django.utils.html import escape
@@ -22,7 +24,7 @@ log = logging.getLogger(name='admin.photo_views')
 @never_cache
 def index(request, page=1):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     paginator = Paginator(PhotoAlbum.objects.all().order_by('-creation_date', 'author'), 10)
     try:
@@ -41,7 +43,8 @@ def index(request, page=1):
 @never_cache
 def create(request):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     response = None
     if request.method == 'GET':
         response = render(request, 'management/albums/create.html', {'section' : 'albums', 'form' : AlbumEditForm })
@@ -64,7 +67,8 @@ def create(request):
 @never_cache
 def edit(request, aid):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     response = None
     album = get_object_or_404(PhotoAlbum, pk=aid)
     if request.method == 'GET':
@@ -98,7 +102,8 @@ def edit(request, aid):
 @never_cache
 def delete(request, aid):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     response = None
     album = get_object_or_404(PhotoAlbum, pk=aid)
     if request.method == 'GET':
@@ -149,7 +154,7 @@ def get_photos(request, aid):
 @never_cache
 def upload_photos(request, aid):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     album = get_object_or_404(PhotoAlbum, pk=aid)
     return render(request, 'management/albums/upload_photos.html', {'section' : 'albums', 'album' : album})
@@ -288,7 +293,7 @@ def upload_photo_save(request, aid):
 @never_cache
 def edit_photo(request, aid, pid):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     response = None
     album = get_object_or_404(PhotoAlbum, pk=aid)

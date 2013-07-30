@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import re
+from django.http import HttpResponseForbidden
+from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.utils.html import escape
 from snzphoto.utils import clean_embedded_video_link
 
 __author__ = 'PervinenkoVN'
 
-import json
-import logging
 from django.views.decorators.cache import never_cache, cache_control
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,7 +17,8 @@ from mngmnt.models import *
 @cache_control(must_revalidate=True)
 def index(request, page=1):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     paginator = Paginator(VideoPost.objects.all().order_by('-creation_date', 'author'), 20)
     try:
         videos = paginator.page(page)
@@ -34,7 +36,7 @@ def index(request, page=1):
 @cache_control(must_revalidate=True)
 def add_article(request):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     result = None
     if request.method == 'GET':
@@ -69,7 +71,7 @@ def add_article(request):
 @cache_control(must_revalidate=True)
 def edit_article(request, id):
     if not request.user.is_authenticated():
-        return redirect('news:index', permanent=True)
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     response = redirect('management:video_index')
     video = get_object_or_404(VideoPost, pk=id)
@@ -131,7 +133,7 @@ def edit_article(request, id):
 @cache_control(must_revalidate=True)
 def delete_article(request, id):
     if not request.user.is_authenticated():
-        return redirect('news:index')
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     response = None
     video = get_object_or_404(VideoPost, pk=id)

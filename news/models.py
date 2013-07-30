@@ -55,8 +55,8 @@ class NewsPostComment(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     news_post = models.ForeignKey(NewsPost, db_column= 'newspost_id')
     author_name = models.TextField(max_length=256)
-    msg = models.TextField(max_length=1024)
+    msg = models.TextField()
 
 class NewsCommentForm(forms.Form):
     author_name = forms.CharField(max_length=256, label=u'Имя')
-    msg = forms.CharField(max_length=256, label=u'Текст')
+    msg = forms.CharField(label=u'Текст')

@@ -34,7 +34,6 @@
                 <a href="#" id="btn_login" class="btn btn-mini">Вход</a>
                 <script type="text/javascript">
                     var loginBtn;
-
                     function loginButtonClickHandlder(e){
                         e.preventDefault();
                         var login = $('input[name=login]').val();
@@ -46,7 +45,7 @@
                         $.post('{% url 'login_handler' %}', {'login' : login, 'pwd' : pass, 'csrfmiddlewaretoken' : csrf}, function(data){
                             var result = JSON.parse(data);
                             if(result.code == 0){
-                                document.location='{% url 'news:index' %}';
+                                document.location='{{ request.get_full_path }}';
                             }
                             else{
                                 $('input[name=login]').val('');

@@ -8,11 +8,11 @@ from snzphoto import ajax, views
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', news_views.index),
+    url(r'^$', news_views.index, name='site_root'),
     url(r'^news/', include('news.urls', namespace='news')),
     url(r'^video/', include('videos.urls', namespace='videos')),
     url(r'^gallery/', include('photos.urls', namespace='photos')),
-    url(r'^management/', include('mngmnt.urls', namespace='management')),
+    url(r'^admin/', include('mngmnt.urls', namespace='management')),
     url(r'^login/$', ajax.login_handler, name='login_handler'),
     url(r'^logout/$', views.logout_action, name='logout_handler'),
     url(r'^badbrowser.html$', views.bad_browser, name='bad_browser')

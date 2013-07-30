@@ -3,6 +3,10 @@
 from django import forms
 from custom_validators import login_validator
 
+class DebatesPostForm(forms.Form):
+    title = forms.CharField(max_length=256, label=u'Заголовок', widget=forms.TextInput())
+    text = forms.CharField(widget=forms.Textarea)
+
 class NewsPostForm(forms.Form):
     title = forms.CharField(max_length=256, label=u'Заголовок', widget=forms.TextInput())
     text = forms.CharField(widget=forms.Textarea)
@@ -19,11 +23,11 @@ class MemberForm(forms.Form):
 
 class AlbumEditForm(forms.Form):
     title = forms.CharField(max_length=256)
-    description = forms.CharField(max_length=2048, widget=forms.Textarea)
+    description = forms.CharField(widget=forms.Textarea)
 
 class PhotoEditForm(forms.Form):
     author = forms.CharField(max_length=512)
-    description = forms.CharField(max_length=4*1024)
+    description = forms.CharField()
 
 class VideoPostForm(forms.Form):
     title = forms.CharField(max_length=256)

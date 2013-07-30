@@ -6,7 +6,9 @@ import logging
 import hashlib
 import datetime
 from PIL import Image
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
+from django.template import RequestContext
+from django.template.loader import render_to_string
 from django.views.decorators.cache import never_cache, cache_control
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
@@ -18,9 +20,10 @@ from mngmnt.models import *
 log = logging.getLogger(name='manager.ajax')
 
 @cache_control(must_revalidate=True)
-def index(r, page = 1):
-    if not r.user.is_authenticated():
-        return redirect('news:index')
+def index(request, page = 1):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     paginator = Paginator(NewsPost.objects.all().order_by('-creation_date', 'author'), 20)
     try:
         view_news = paginator.page(page)
@@ -29,35 +32,36 @@ def index(r, page = 1):
     except EmptyPage:
         view_news = paginator.page(paginator.num_pages)
 
-    return render(r, 'management/news/index.html', {
+    return render(request, 'management/news/index.html', {
         'news' : view_news,
         'section' : 'news',
         'total_count' : NewsPost.objects.count()
     })
 
 @never_cache
-def add_article(r):
-    if not r.user.is_authenticated():
-        return redirect('news:index')
+def add_article(request):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     result = None
-    if r.method == 'GET':
-        result = render(r, 'management/news/add.html',{
+    if request.method == 'GET':
+        result = render(request, 'management/news/add.html',{
             'form' : NewsPostForm(),
             'section' : 'news'
         })
-    elif r.method == 'POST':
-        form = NewsPostForm(r.POST)
+    elif request.method == 'POST':
+        form = NewsPostForm(request.POST)
         tmp_attach_name = uploaded_file = uploaded_thumb_file = thumb_url = None
-        if 'tmp_attach_name' in r.POST and len(r.POST['tmp_attach_name']) > 0:
-            if re.match('[a-z0-9]+\.[a-z]+', r.POST['tmp_attach_name']):
-                tmp_attach_name = r.POST['tmp_attach_name']
+        if 'tmp_attach_name' in request.POST and len(request.POST['tmp_attach_name']) > 0:
+            if re.match('[a-z0-9]+\.[a-z]+', request.POST['tmp_attach_name']):
+                tmp_attach_name = request.POST['tmp_attach_name']
                 uploaded_thumb_file = "uploads/%s" % NewsPost.get_thumbname_from_base(tmp_attach_name)
                 uploaded_file = 'uploads/%s' % tmp_attach_name
                 if fs.exists(uploaded_thumb_file):
                     thumb_url = fs.url(uploaded_thumb_file)
 
         if not form.is_valid():
-            result = render(r, 'management/news/add.html',{
+            result = render(request, 'management/news/add.html',{
                 'form' : form,
                 'section' : 'news',
                 'tmp_attach_name' : tmp_attach_name,
@@ -65,7 +69,7 @@ def add_article(r):
             })
         else:
             news_obj = NewsPost(
-                author=r.user,
+                author=request.user,
                 title=form.cleaned_data['title'],
                 text=form.cleaned_data['text']
             )
@@ -104,16 +108,17 @@ def add_article(r):
     return result
 
 @never_cache
-def edit_article(r, news_id):
-    if not r.user.is_authenticated():
-        return redirect('news:index', permanent=True)
+def edit_article(request, news_id):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
+
     try:
         news_obj = NewsPost.objects.get(pk=news_id)
     except NewsPost.DoesNotExist:
         return redirect('management:news_index', permanent=True)
 
-    if r.method == 'GET':
-        return render(r, 'management/news/edit.html',{
+    if request.method == 'GET':
+        return render(request, 'management/news/edit.html',{
             'form' : NewsPostForm(initial={
                 'title' : news_obj.title,
                 'text' : news_obj.text,
@@ -122,8 +127,8 @@ def edit_article(r, news_id):
             'post' : news_obj,
             'section' : 'news'
         })
-    elif r.method == 'POST':
-        form = NewsPostForm(r.POST)
+    elif request.method == 'POST':
+        form = NewsPostForm(request.POST)
         try:
             if form.is_valid():
                 news_obj.title = form.cleaned_data['title']
@@ -148,17 +153,17 @@ def edit_article(r, news_id):
                     news_obj.uid = token_uid
 
                 trash = list()
-                if 'flag_rm_attach' in r.POST and len(r.POST['flag_rm_attach']) > 0:
+                if 'flag_rm_attach' in request.POST and len(request.POST['flag_rm_attach']) > 0:
                     trash.append('news/%s' % news_obj.enclosure)
                     trash.append("news/thumbs/%s" % news_obj.get_thumbfile_name())
                     news_obj.enclosure = ""
 
-                if 'tmp_attach_name' in r.POST and len(r.POST['tmp_attach_name']) > 0:
-                    if not re.match('[a-z0-9]+\.[a-z]+', r.POST['tmp_attach_name']):
+                if 'tmp_attach_name' in request.POST and len(request.POST['tmp_attach_name']) > 0:
+                    if not re.match('[a-z0-9]+\.[a-z]+', request.POST['tmp_attach_name']):
                         form.errors[u'uid'] = u'Ошибка загрузки файла. Презагрузите страницу и повторите операцию'
                         raise ValueError
 
-                    fname_base = r.POST['tmp_attach_name']
+                    fname_base = request.POST['tmp_attach_name']
                     uploaded_file = 'uploads/%s' % fname_base
                     new_stored_file = 'news/%s' % fname_base
                     uploaded_thumb_file = "uploads/%s" % NewsPost.get_thumbname_from_base(fname_base)
@@ -192,7 +197,7 @@ def edit_article(r, news_id):
             else:
                 raise ValueError
         except ValueError:
-            return render(r, 'management/news/edit.html',{
+            return render(request, 'management/news/edit.html',{
                 'form' : form,
                 'post' : news_obj,
                 'section' : 'news'
@@ -203,17 +208,17 @@ def edit_article(r, news_id):
     return resp
 
 @never_cache
-def delete_article(r, news_id):
-    if not r.user.is_authenticated():
-        return redirect('news:index')
+def delete_article(request, news_id):
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
     result = None
     try:
         news_obj = NewsPost.objects.get(pk=news_id)
-        if r.method == 'GET':
-            result = render(r, "management/news/delete.html", {'post' : news_obj, 'section' : 'news'})
+        if request.method == 'GET':
+            result = render(request, "management/news/delete.html", {'post' : news_obj, 'section' : 'news'})
             result["X-RCode"] = 200
-        elif r.method == "POST":
+        elif request.method == "POST":
             comments = NewsPostComment.objects.filter(news_post=news_obj)
             for c in comments:
                 c.delete()
@@ -246,7 +251,7 @@ def delete_article(r, news_id):
 @never_cache
 def attachment_upload(r):
     if not r.user.is_authenticated():
-        return HttpResponse(get_script_response(code=1, message='Unauthorized'))
+        return HttpResponse(get_script_response(code=403, message='Unauthorized'))
 
     if 'userfile' not in r.FILES:
         return HttpResponse(get_script_response(code=1, message='File expected'))
@@ -287,7 +292,8 @@ def attachment_upload(r):
 @never_cache
 def attachment_remove(r):
     if not r.user.is_authenticated():
-        return HttpResponse(get_json_response(code=1, message='Unauthorized'))
+        return HttpResponse(get_json_response(code=403, message='Unauthorized'))
+
     try:
         if 'base_name' in r.POST and len(r.POST['base_name']) > 0:
             # deleting recently uploaded image

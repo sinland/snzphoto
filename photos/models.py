@@ -13,7 +13,7 @@ class PhotoAlbum(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, db_column='author_id')
     title = models.CharField(max_length=256)
-    description = models.CharField(max_length=2048)
+    description = models.TextField()
     creation_date = models.DateTimeField(auto_now_add=True)
     views_counter = models.BigIntegerField()
 
@@ -61,7 +61,7 @@ class Photo(models.Model):
     id = models.AutoField(primary_key=True)
     album = models.ForeignKey(PhotoAlbum, db_column='photoalbum_id')
     creation_date = models.DateTimeField(auto_now_add=True)
-    description = models.CharField(max_length=4*1024)
+    description = models.TextField()
     filename = models.CharField(max_length=128)
     thumbfile = models.CharField(max_length=128)
     author = models.CharField(max_length=512)

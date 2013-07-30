@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block page_title %}Доступ запрещен{% endblock %}
+{% block content %}
+<h4>Доступ запрещен</h4>
+<div>Для доступа по адресу '<a href="{{ request.get_full_path }}">{{ request.get_full_path }}</a>' необходима авторизация!</div>
+{% endblock %}

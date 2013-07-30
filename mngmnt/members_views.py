@@ -12,7 +12,7 @@ __author__ = 'PervinenkoVN'
 
 def index(request, page=1):
     if not request.user.is_staff:
-        return redirect('news:index')
+        return redirect('site_root')
 
     members = None
     paginator = Paginator(User.objects.all().order_by('-date_joined', 'username'), 20)
@@ -31,7 +31,7 @@ def index(request, page=1):
 @never_cache
 def edit(request, mid):
     if not request.user.is_staff:
-        return redirect('news:index')
+        return redirect('site_root')
 
     response = None
     try:
@@ -75,7 +75,7 @@ def edit(request, mid):
 
 def add(request):
     if not request.user.is_staff:
-        return redirect('news:index')
+        return redirect('site_root')
 
     response = None
     if request.method == 'GET':
@@ -117,7 +117,7 @@ def add(request):
 
 def delete(request, mid):
     if not request.user.is_staff:
-        return redirect('news:index')
+        return redirect('site_root')
 
     response = None
     member = None
