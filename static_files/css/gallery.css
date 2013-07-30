@@ -1,0 +1,30 @@
+.photoalbum {
+    margin: 25px 0px 25px 0px;
+}
+.photoalbum-title {}
+.photoalbum-title a {
+    color: #000;
+    font-size: 1.25em;
+}
+.photoalbum-title a:hover { text-decoration: none;}
+.photoalbum-summary {
+    position: relative;
+}
+.photoalbum-summary > img {
+    width: 130px;
+    max-width: 130px;
+    margin: 10px 10px 10px 0px;
+    display: inline-block;
+}
+.photoalbum-summary .description {
+    margin: 10px 10px 10px 0px;
+    display: inline-block;
+    vertical-align: top;
+    width: 800px;
+}
+.photoalbum-summary .description a {
+    display: table;
+    margin-top: 10px;
+}
+
+.photoalbum-underline { font-size: 0.9em; font-style: italic;}

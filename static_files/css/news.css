@@ -1,0 +1,25 @@
+.article-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    /*border: 1px dashed #e7cf52;*/
+    /*margin: 5px;*/
+    /*border-radius: 5px;*/
+    border-bottom: 1px dotted #e1e1e1;
+}
+.article-item-title {
+    font-size: 1.1em;
+}
+.article-item-title a {
+    color: #000;
+    font-size: 1.25em;
+}
+.article-item-title a:hover {
+    text-decoration: none;
+}
+.article-item-underline {
+    font-size: 0.9em;
+    margin: 10px;
+}
+.article-item-summary {
+    padding: 10px 0px 10px 0px;
+}

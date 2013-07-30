@@ -1,0 +1,35 @@
+{% extends "debates/base_news.html" %}
+{% load url from future %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/debates.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% for news in view_news %}
+        <div class='article-item'>
+            <div class="article-item-title"><a href="{% url 'debates:details' news.id %}">{{ news.title|upper }}</a></div>
+            <div class="article-item-summary">{{ news.text|safe|truncatewords_html:50 }}</div>
+            <a href="{% url 'debates:details' news.id %}" class="btn btn-mini">Подробнее...</a>
+            <div class="article-item-underline">{{ news.author.username }} | {{ news.creation_date|date:"d.m.Y в H:i" }} | комментариев: {{ news.comments_count }}</div>
+
+        </div>
+    {% endfor %}
+    {% if view_news.paginator.num_pages > 1 %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if view_news.has_previous %}
+                    <a href="{% url 'debates:paged_index' view_news.previous_page_number %}">&larr;</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ view_news.number }} of {{ view_news.paginator.num_pages }}.
+                </span>
+                {% if view_news.has_next %}
+                    <a href="{% url 'debates:paged_index' view_news.next_page_number %}">&rarr;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,95 @@
+.img-upload-inholder{
+    overflow: hidden;
+    width: 110px;
+    height: 26px;
+    background-color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 3px;
+    padding-top: 0px;
+}
+.img-upload-inholder:hover{ box-shadow: 0px 0px 10px 2px #c4e3f3; }
+.img-upload-inholder input[type=file]{
+    margin-top: -65px;
+    margin-left: -410px;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    font-size: 150px;
+    height: 98px;
+}
+.attach-container{
+    position: relative;
+    overflow: hidden;
+    height: 160px;
+    margin-bottom: 10px;
+}
+.attach-container img {
+    width: 140px;
+}
+.attach-container label {
+    position: absolute;
+    left: 200px;
+}
+.attach-container input[name=author]{
+    position: absolute;
+    top: 0px;
+    left: 280px;
+}
+.attach-container textarea{
+    position: absolute;
+    top: 40px;
+    left: 280px;
+    width: 400px;
+    height: 50px;
+}
+input[type=text].warning,
+textarea.warning {
+    border: 1px solid #fed0d0;
+    background-color: #fdf9f9;
+}
+.attach-container .lb-attach-author { top: 3px;}
+.attach-container .lb-attach-descr { top: 43px;}
+.attach-container a.btn { position: absolute; top: 110px; }
+.attach-container a.btn-attach-save {left: 280px; }
+.attach-container a.btn-attach-cancel {position: absolute; left: 390px; top: 110px;}
+.ifr-hidden {
+    width: 1px;
+    height: 1px;
+    border: 0 solid #FFF;
+}
+.upload-frm-container {
+    position: relative;
+}
+.upload-frm-container > div {display: inline-block; margin: 3px; vertical-align: top;}
+
+album-photos-preview img {
+    box-shadow: 0px 0px 7px 2px #ddd
+}
+.album-photos-preview > div {
+    display: inline-block;
+    width: 150px;
+    position: relative;
+    padding-right: 27px;;
+    margin: 10pt 10pt 10pt 0pt;
+}
+.album-photos-preview > div .icon-edit {
+    position: absolute;
+    top: 15px;
+    right: 0px;
+    opacity: 0.2;
+    cursor: pointer;
+}
+.album-photos-preview > div .icon-edit:hover {
+    opacity: 0.7;
+}
+.album-photos-preview > div .icon-remove {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    opacity: 0.2;
+    cursor: pointer;
+}
+.album-photos-preview > div .icon-remove:hover {
+    opacity: 0.7;
+}

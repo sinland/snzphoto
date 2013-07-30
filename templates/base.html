@@ -76,6 +76,9 @@
         <li {% if section == "news" %}class="active"{% endif %}><a href="{%  url 'news:index' %}">Новости</a></li>
         <li {% if section == "photo" %}class="active"{% endif %}><a href="{% url 'photos:index' %}">Фото</a></li>
         <li {% if section == "video" %}class="active"{% endif %}><a href="{% url 'videos:index' %}">Видео</a></li>
+    {% if user.is_authenticated %}
+        <li {% if section == "debates" %}class="active"{% endif %}><a href="{% url 'debates:index' %}">Обсуждения</a></li>
+    {% endif %}
     </ul>
     </div>
 </div>
