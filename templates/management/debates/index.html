@@ -3,7 +3,7 @@
 {% block page_title %}Обсуждения{% endblock %}
 {% block content %}
     <h4>Обсуждения</h4>
-    <a href="{% url 'management:debates_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новую запись</a>
+    <a href="{% url 'management:debates_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Начать новую тему</a>
     {% if posts|length > 0 %}
         <div>
             <table class="table table-hover">
@@ -52,6 +52,6 @@
         <div>Всего новостей: {{ total_count }}</div>
         <div class="clearfix">&nbsp;</div>
     {% else %}
-        <div style="padding: 10px;">Записей нет</div>
+        <div style="padding: 10px;">Тем для обсуждения нет</div>
     {% endif %}
 {% endblock %}

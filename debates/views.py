@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from snzphoto import settings
 from snzphoto.utils import get_json_response
 
-#todo: новости: сделать капчу на добавление комментария
+#todo: обсуждения: сделать капчу на добавление комментария
 
 @never_cache
 def index(r, page='1'):
@@ -28,7 +28,7 @@ def index(r, page='1'):
 
 @never_cache
 def details(r, id):
-    section = 'news'
+    section = 'debates'
     post = get_object_or_404(DiscussionPost, pk=id)
     if 'last_viewed_forumpage' in r.COOKIES:
         try:
@@ -47,18 +47,19 @@ def details(r, id):
     return response
 
 @never_cache
-def get_comments(request, pid):
+def get_comments(request, id):
     respsonse = None
     try:
-        post = DiscussionPost.objects.get(pk=pid)
-        comments = DiscussionPostComment.objects.filter(news_post=post).order_by('creation_date', 'author_name')
+        post = DiscussionPost.objects.get(pk=id)
+        comments = DiscussionPostComment.objects.filter(post=post).order_by('creation_date', 'author_name')
         arr = list()
         for c in comments:
             arr.append(json.dumps(
                 {
                     'author_name': c.author_name,
                     'msg': c.msg,
-                    'cid': c.id
+                    'cid': c.id,
+                    'date': c.creation_date.strftime("%d.%m.%Y %H:%M"),
                 }
             ))
         respsonse = get_json_response(code=200, values={'comments' : arr})
@@ -67,13 +68,13 @@ def get_comments(request, pid):
     return respsonse
 
 @never_cache
-def add_comment(request, pid):
+def add_comment(request, id):
     response = None
     if request.method != 'POST':
         response = get_json_response(code=405, message='Method not supported')
     else:
         try:
-            post = DiscussionPost.objects.get(pk=pid)
+            post = DiscussionPost.objects.get(pk=id)
             form = DiscussionPostCommentForm(request.POST)
             if not form.is_valid():
                 response = get_json_response(code=400)
@@ -84,7 +85,10 @@ def add_comment(request, pid):
                     msg=form.cleaned_data['msg']
                 )
                 comment.save()
-                response = get_json_response(code=200, values={'cid' : comment.id})
+                response = get_json_response(code=200, values={
+                    'cid' : comment.id,
+                    'date': comment.creation_date.strftime("%d.%m.%Y %H:%M")
+                    })
                 try:
                     response.set_cookie('comment_username', comment.author_name)
                 except ValueError:
@@ -94,7 +98,7 @@ def add_comment(request, pid):
     return response
 
 @never_cache
-def delete_comment(request, pid):
+def delete_comment(request, id):
     if request.method != 'POST':
         response = get_json_response(code=400, message='Post please')
     else:
@@ -103,7 +107,7 @@ def delete_comment(request, pid):
         else:
             cid = request.POST['cid']
             try:
-                post = DiscussionPost.objects.get(pk=pid)
+                post = DiscussionPost.objects.get(pk=id)
                 if post.author.id != request.user.id:
                     response = get_json_response(code=403, message='Only post owners allowed')
                 else:

@@ -21,7 +21,7 @@
                 var data = $.parseJSON(response);
                 if(data.code == 200){
                     var tpl = _.template($('#comment-template').html());
-                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid})).prependTo(page.comments_div);
+                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid, 'date': data.date})).prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
                 {% endif %}
@@ -61,7 +61,7 @@
                 var tpl = _.template($('#comment-template').html());
                 for(var i=0;i<data.comments.length;i++){
                     var obj = $.parseJSON(data.comments[i])
-                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid}));
+                    var comment = $(tpl({'author_name':obj.author_name, 'msg':obj.msg, 'cid':obj.cid, 'date':obj.date}));
                     comment.prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
@@ -83,12 +83,12 @@
     {% endif %}
     <div class="article-underline">{{ post.author }} {{ post.creation_date|date:"H:i d.m.Y" }}</div>
     <div style="margin: 10px 10px 10px 0px;">
-        <input type="button" value="&larr;&nbsp;Назад к новостям" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
+        <input type="button" value="&larr;&nbsp;Назад" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'debates:paged_index' return_page %}{% else %}{% url 'debates:index' %}{% endif %}'">
     </div>
     <div class='article-comments' style="display: none;">
         <div class="article-comments-label">Комментарии</div>
     </div>
-    <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
+    <form id="frm-comment" action="{% url 'debates:add_comment' post.id %}" method="post">
         <legend>Добавить комментарий</legend>
         <fieldset>
             <div style="position: relative;">
@@ -111,22 +111,22 @@
     </form>
     <script type="text/javascript">
         $(document).ready(function(){
-            page.add_comment_url = '{% url 'news:add_comment' post.id %}';
-            page.del_comment_url = '{% url 'news:delete_comment' post.id %}';
+            page.add_comment_url = '{% url 'debates:add_comment' post.id %}';
+            page.del_comment_url = '{% url 'debates:delete_comment' post.id %}';
             page.comments_div = $('div.article-comments');
             page.editor = $("textarea[name=msg]").cleditor({
                 width: 600,
                 height: 100,
                 controls: "bold italic underline strikethrough link unlink"
             })[0];
-            $.getJSON('{% url 'news:get_comments' post.id %}', onGetCommentsComplete);
+            $.getJSON('{% url 'debates:get_comments' post.id %}', onGetCommentsComplete);
         });
     </script>
 
     <script type="text/template" id="comment-template">
         <div class="comment" data-cid="<%= cid %>">
             <div class="comment-header">
-                <b><%= author_name %>&nbsp;</b>
+                <b><%= author_name %></b>&nbsp;<small>(<%= date %>)&nbsp;</small>
                 {% if user.id == post.author.id %}<small><a class="comment-delete-link" href="#">удалить</a></small>{% endif %}
             </div>
             <div class="comment-body"><%= msg %></div>

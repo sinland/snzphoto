@@ -21,7 +21,7 @@ body {
     text-align: right;
 }
 .footer {
-    border-top: 1px solid #daa520;
+    /*border-top: 1px solid #daa520;*/
     margin-top: 10px;
     padding-top: 10px
 }

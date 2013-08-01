@@ -19,7 +19,7 @@
                 var data = $.parseJSON(response);
                 if(data.code == 200){
                     var tpl = _.template($('#comment-template').html());
-                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid})).prependTo(page.comments_div);
+                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid, 'date': data.date})).prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
                 {% endif %}
@@ -59,7 +59,7 @@
                 var tpl = _.template($('#comment-template').html());
                 for(var i=0;i<data.comments.length;i++){
                     var obj = $.parseJSON(data.comments[i])
-                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid}));
+                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid, 'date': obj.date}));
                     comment.prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
@@ -122,7 +122,7 @@
     <script type="text/template" id="comment-template">
         <div class="comment" data-cid="<%= cid %>">
             <div class="comment-header">
-                <b><%= author_name %>&nbsp;</b>
+                <b><%= author_name %></b>&nbsp;<small>(<%= date %>)&nbsp;</small>
                 {% if user.id == post.author.id %}<small><a class="comment-delete-link" href="#">удалить</a></small>{% endif %}
             </div>
             <div class="comment-body"><%= msg %></div>

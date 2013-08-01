@@ -229,7 +229,7 @@ def attach_upload(request):
     if not f.content_type.startswith('image/'):
         return HttpResponse(get_script_response(code=400, message='File format not supported!'))
 
-    hash_base = "%s-%s-%s-%s" % (f.name, datetime.datetime.now().isoformat(' '), request.META['HTTP_USER_AGENT'], request.get_host())
+    hash_base = "%s-%s-%s-%s" % (f.name, datetime.datetime.now().isoformat(' '), request.META['HTTP_USER_AGENT'], request.META['REMOTE_ADDR'])
     fname_base = hashlib.md5(hash_base).hexdigest()
     ext = f.name.split('.')[-1]
     if len(ext) > 5:

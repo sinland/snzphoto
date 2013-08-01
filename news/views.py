@@ -6,6 +6,7 @@ from django.utils.html import escape
 from django.views.decorators.cache import never_cache
 from news.models import *
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from recaptcha.client import captcha
 from snzphoto import settings
 from snzphoto.utils import get_json_response
 
@@ -58,7 +59,8 @@ def get_comments(request, pid):
                 {
                     'author_name': c.author_name,
                     'msg': c.msg,
-                    'cid': c.id
+                    'cid': c.id,
+                    'date': c.creation_date.strftime("%d.%m.%Y %H:%M")
                     }
             ))
         respsonse = get_json_response(code=200, values={'comments' : arr})
@@ -70,27 +72,39 @@ def get_comments(request, pid):
 def add_comment(request, pid):
     response = None
     if request.method != 'POST':
-        response = get_json_response(code=405, message='Method not supported')
-    else:
+        return get_json_response(code=405, message='Method not supported')
+    try:
+        post = NewsPost.objects.get(pk=pid)
+        if 'challenge' not in request.POST or 'response' not in request.POST:
+            raise ValueError('Captcha validation failed: response missing')
+        captcha_response = captcha.submit(
+            request.POST['challenge'],
+            request.POST['response'],
+            settings.RECAPCHA_PRIVATE_API_KEY,
+            request.META['REMOTE_ADDR']
+        )
+        if not captcha_response.is_valid:
+            raise ValueError('Captcha validation failed')
+
+        form = NewsCommentForm(request.POST)
+        if not form.is_valid():
+            raise ValueError('Comment format invalid')
+
+        comment = NewsPostComment(
+            news_post=post,
+            author_name=escape(form.cleaned_data['author_name']),
+            msg=form.cleaned_data['msg']
+        )
+        comment.save()
+        response = get_json_response(code=200, values={'cid' : comment.id, 'date':comment.creation_date.strftime("%d.%m.%Y %H:%M") })
         try:
-            post = NewsPost.objects.get(pk=pid)
-            form = NewsCommentForm(request.POST)
-            if not form.is_valid():
-                response = get_json_response(code=400)
-            else:
-                comment = NewsPostComment(
-                    news_post=post,
-                    author_name=escape(form.cleaned_data['author_name']),
-                    msg=form.cleaned_data['msg']
-                )
-                comment.save()
-                response = get_json_response(code=200, values={'cid' : comment.id})
-                try:
-                    response.set_cookie('comment_username', comment.author_name)
-                except ValueError:
-                    pass
-        except NewsPost.DoesNotExist:
-            response = get_json_response(code=404, message='Post not found')
+            response.set_cookie('comment_username', comment.author_name)
+        except ValueError:
+            pass
+    except NewsPost.DoesNotExist:
+        response = get_json_response(code=404, message='Post not found')
+    except ValueError as e:
+        response = get_json_response(code=400, message=e.message)
     return response
 
 @never_cache

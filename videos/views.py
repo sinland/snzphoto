@@ -58,7 +58,8 @@ def get_comments(request, pid):
                 {
                     'author_name': c.author_name,
                     'msg': c.msg,
-                    'cid': c.id
+                    'cid': c.id,
+                    'date': c.creation_date.strftime("%d.%m.%Y %H:%M")
                     }
             ))
 
@@ -85,7 +86,10 @@ def add_comment(request, pid):
                     msg=form.cleaned_data['msg']
                 )
                 comment.save()
-                response = get_json_response(code=200)
+                response = get_json_response(code=200, values= {
+                    'cid' : comment.id,
+                    'date': comment.creation_date.strftime("%d.%m.%Y %H:%M")
+                })
         except VideoPost.DoesNotExist:
             response = get_json_response(code=404, message='Post not found')
     return response

@@ -2,7 +2,7 @@
 {% load url from future %}
 {% load staticfiles %}
 {% block page_title %}
-Создание темы
+Создание темы обсуждения
 {% endblock %}
 {% block head %}
     <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
@@ -23,7 +23,7 @@
     {% endif %}
     <form id="post-edit-form" action="" method="post" class="form-horizontal">
         <fieldset>
-            <legend>Создание темы</legend>
+            <legend>Создание темы обсуждения</legend>
             <div class="control-group">
                 <label class="control-label">Заголовок: </label>
                 <div class="controls">
@@ -127,7 +127,7 @@
         <form id="<%= formId %>" class="form-horizontal" action="{% url 'management:debates_att_upload' %}" method="post" target="<%= iframeId %>" enctype="multipart/form-data">
             <fieldset>
                 <div class="control-group">
-                    <label class="control-label">Прикрепить файл:</label>
+                    <label class="control-label">Прикрепить изображение:</label>
                     <div class="controls">
                         <div style="overflow: hidden; width: 150px; height: 50px; border: 0px; background-color: #fff;">
                             <button type="button" class="btn">файл не выбран</button>

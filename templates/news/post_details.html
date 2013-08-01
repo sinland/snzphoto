@@ -2,6 +2,7 @@
 {% load url from future %}
 {% load staticfiles %}
 {% block head %}
+    <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
     <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
     <script type="text/javascript" src={% static 'js/lightbox.js' %}></script>
     <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
@@ -17,11 +18,22 @@
             if(author.length == 0 || msg.length == 0){
                 return;
             }
-            $.post(page.add_comment_url, {'author_name' : author, 'msg' : msg, 'csrfmiddlewaretoken' : csrf}, function(response){
+            var challenge, response;
+            if(typeof Recaptcha != "undefined"){
+                challenge = Recaptcha.get_challenge();
+                response = Recaptcha.get_response();
+            }
+            $.post(page.add_comment_url, {
+                'author_name' : author,
+                'msg' : msg,
+                'csrfmiddlewaretoken' : csrf,
+                'challenge': challenge,
+                'response': response
+            }, function(response){
                 var data = $.parseJSON(response);
                 if(data.code == 200){
                     var tpl = _.template($('#comment-template').html());
-                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid})).prependTo(page.comments_div);
+                    var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid, 'date': data.date})).prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
                 {% endif %}
@@ -31,6 +43,9 @@
                     }
                     catch(e) {
                         app.error(e.message)
+                    }
+                    if(typeof Recaptcha != "undefined"){
+                        Recaptcha.reload()
                     }
                 }
                 else {
@@ -61,7 +76,7 @@
                 var tpl = _.template($('#comment-template').html());
                 for(var i=0;i<data.comments.length;i++){
                     var obj = $.parseJSON(data.comments[i])
-                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid}));
+                    var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid, 'date':obj.date}));
                     comment.prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
                     comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
@@ -104,9 +119,19 @@
                 <label style="position: absolute; left: 0px; top: 5px">Текст</label>
             </div>
             {% csrf_token %}
+{#            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{ recapcha_api_key }}"></script>#}
+{#            <noscript>#}
+{#                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{ recapcha_api_key }}" height="300" width="500" frameborder="0"></iframe><br>#}
+{#                <textarea name="recaptcha_challenge_field" cols="40" rows="3"></textarea>#}
+{#                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">#}
+{#            </noscript>#}
+            <div style="padding-left: 50px; margin-top: 10px;">
+                <div id="recapcha_container"></div>
+            </div>
             <div style="padding-left: 50px; margin-top: 10px;">
                 <input type="button" value="Отправить" class="btn" onclick="onCommentSubmit()">
             </div>
+
         </fieldset>
     </form>
     <script type="text/javascript">
@@ -120,13 +145,15 @@
                 controls: "bold italic underline strikethrough link unlink"
             })[0];
             $.getJSON('{% url 'news:get_comments' post.id %}', onGetCommentsComplete);
+            if(typeof Recaptcha != "undefined"){
+                Recaptcha.create("{{ recapcha_api_key }}", "recapcha_container", {theme: "white"});
+            }
         });
     </script>
-
     <script type="text/template" id="comment-template">
         <div class="comment" data-cid="<%= cid %>">
             <div class="comment-header">
-                <b><%= author_name %>&nbsp;</b>
+                <b><%= author_name %></b>&nbsp;<small>(<%= date %>)&nbsp;</small>
                 {% if user.id == post.author.id %}<small><a class="comment-delete-link" href="#">удалить</a></small>{% endif %}
             </div>
             <div class="comment-body"><%= msg %></div>
