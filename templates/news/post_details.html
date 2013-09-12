@@ -2,13 +2,12 @@
 {% load url from future %}
 {% load staticfiles %}
 {% block head %}
-    <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+{#    <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>#}
     <script type="text/javascript" src={% static 'js/jquery.cleditor.min.js' %}></script>
     <script type="text/javascript" src={% static 'js/lightbox.js' %}></script>
     <link rel="stylesheet" href="{% static 'css/jquery.cleditor.css' %}">
     <link rel="stylesheet" href="{% static 'css/lightbox.css' %}">
-    <link rel="stylesheet" href="{% static 'css/news.css' %}">
-
+    <link rel="stylesheet" href="{% static 'css/events.css' %}">
     <script type="text/javascript">
         var page = { }
         function onCommentSubmit(){
@@ -35,7 +34,7 @@
                     var tpl = _.template($('#comment-template').html());
                     var comment = $(tpl({'author_name' : author, 'msg' : msg, 'cid' : data.cid, 'date': data.date})).prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
-                    comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
+                    comment.find('a.delete-link').bind('click', onDeleteCommentClick);
                 {% endif %}
                     page.comments_div.fadeIn(300);
                     try{
@@ -57,13 +56,13 @@
             function onDeleteCommentClick(e){
                 e.preventDefault();
                 var csrf = $('input[name=csrfmiddlewaretoken]').val();
-                var container = $(this).parents('div.comment');
+                var container = $(this).parents('div.event-comment');
                 $.post(page.del_comment_url, {'cid' : container.attr('data-cid'),  'csrfmiddlewaretoken' : csrf}, function(response){
                     var data = $.parseJSON(response);
                     if(data.code == 200){
                         container.fadeOut(300, function(){
                             container.remove();
-                            if(page.comments_div.find('div.comment').length == 0) page.comments_div.fadeOut(300);
+                            if(page.comments_div.find('div.event-comment').length == 0) page.comments_div.fadeOut(300);
                         });
                     } else {
                         app.error('Failed to delete comment. code: ' + data.code + '; ' + data.message);
@@ -79,7 +78,7 @@
                     var comment = $(tpl({'author_name' : obj.author_name, 'msg' : obj.msg, 'cid' : obj.cid, 'date':obj.date}));
                     comment.prependTo(page.comments_div);
                 {% if user.id == post.author.id %}
-                    comment.find('a.comment-delete-link').bind('click', onDeleteCommentClick);
+                    comment.find('a.delete-link').bind('click', onDeleteCommentClick);
                 {% endif %}
                 }
                 if(data.comments.length > 0) page.comments_div.fadeIn(200);
@@ -88,53 +87,7 @@
                 app.log('get_comments failed. code: ' + data.code + '; message: ' + data.message);
             }
         }
-    </script>
-{% endblock %}
-{% block content %}
-    <div class="article-header">{{ post.title }}</div>
-    <div class="article-text">{{ post.text|safe }}</div>
-    {% if post.enclosure %}
-        <div class="article-attachment"><a href="{{ post.attach_full_url }}" rel="lightbox" title="Прикрепленное изображение"><img class="img-polaroid" src="{{ post.attach_full_url }}"></a></div>
-    {% endif %}
-    <div class="article-underline">{{ post.author }} {{ post.creation_date|date:"H:i d.m.Y" }}</div>
-    <div style="margin: 10px 10px 10px 0px;">
-        <input type="button" value="&larr;&nbsp;Назад к новостям" class="btn" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
-    </div>
-    <div class='article-comments' style="display: none;">
-        <div class="article-comments-label">Комментарии</div>
-    </div>
-    <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
-        <legend>Добавить комментарий</legend>
-        <fieldset>
-            <div style="position: relative;">
-                <div style='padding-left: 50px;'>
-                    <input type="text" name='author_name' value="{{ comment_username }}" class="">
-                </div>
-                <label style="position: absolute; left: 0px; top: 5px">Имя</label>
-            </div>
-            <div style="position: relative;">
-                <div style='padding-left: 50px;'>
-                    <textarea name='msg' value="" class="" style="width: 600px; height: 100px;"></textarea>
-                </div>
-                <label style="position: absolute; left: 0px; top: 5px">Текст</label>
-            </div>
-            {% csrf_token %}
-{#            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{ recapcha_api_key }}"></script>#}
-{#            <noscript>#}
-{#                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{ recapcha_api_key }}" height="300" width="500" frameborder="0"></iframe><br>#}
-{#                <textarea name="recaptcha_challenge_field" cols="40" rows="3"></textarea>#}
-{#                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">#}
-{#            </noscript>#}
-            <div style="padding-left: 50px; margin-top: 10px;">
-                <div id="recapcha_container"></div>
-            </div>
-            <div style="padding-left: 50px; margin-top: 10px;">
-                <input type="button" value="Отправить" class="btn" onclick="onCommentSubmit()">
-            </div>
 
-        </fieldset>
-    </form>
-    <script type="text/javascript">
         $(document).ready(function(){
             page.add_comment_url = '{% url 'news:add_comment' post.id %}';
             page.del_comment_url = '{% url 'news:delete_comment' post.id %}';
@@ -142,7 +95,7 @@
             page.editor = $("textarea[name=msg]").cleditor({
                 width: 600,
                 height: 100,
-                controls: "bold italic underline strikethrough link unlink"
+                controls: "bold italic underline strikethrough link unlink image"
             })[0];
             $.getJSON('{% url 'news:get_comments' post.id %}', onGetCommentsComplete);
             if(typeof Recaptcha != "undefined"){
@@ -150,13 +103,65 @@
             }
         });
     </script>
+{% endblock %}
+{% block content %}
+    <div class="span1">&nbsp;</div>
+    <div class="span10">
+    <div class="article">
+        <div class="header">{{ post.title|capfirst }}</div>
+        <div class="text">{{ post.text|safe }}</div>
+        {% if post.enclosure %}
+            <div class="attachment"><a href="{{ post.attach_full_url }}" rel="lightbox" title="Прикрепленное изображение"><img class="img-polaroid" src="{{ post.attach_full_url }}"></a></div>
+        {% endif %}
+{#        <div class="article-underline">{{ post.author }} {{ post.creation_date|date:"H:i d.m.Y" }}</div>#}
+        <div class="return-btn">
+            <input type="button" value="&larr;&nbsp;Назад к событиям" class="btn btn-small" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
+        </div>
+    </div>
+    {% if user.is_authenticated %}
+        <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
+            <legend>Добавить комментарий</legend>
+            <fieldset>
+                <div style="position: relative;">
+                    <div style='padding-left: 50px;'>
+                        <input type="text" name='author_name' value="{{ comment_username }}" class="">
+                    </div>
+                    <label style="position: absolute; left: 0px; top: 5px">Имя</label>
+                </div>
+                <div style="position: relative;">
+                    <div style='padding-left: 50px;'>
+                        <textarea name='msg' value="" class="" style="width: 600px; height: 100px;"></textarea>
+                    </div>
+                    <label style="position: absolute; left: 0px; top: 5px">Текст</label>
+                </div>
+                {% csrf_token %}
+                {#            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{ recapcha_api_key }}"></script>#}
+                {#            <noscript>#}
+                {#                <iframe src="http://www.google.com/recaptcha/api/noscript?k={{ recapcha_api_key }}" height="300" width="500" frameborder="0"></iframe><br>#}
+                {#                <textarea name="recaptcha_challenge_field" cols="40" rows="3"></textarea>#}
+                {#                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">#}
+                {#            </noscript>#}
+                <div style="padding-left: 50px; margin-top: 10px;">
+                    <div id="recapcha_container"></div>
+                </div>
+                <div style="padding-left: 50px; margin-top: 10px;">
+                    <input type="button" value="Отправить" class="btn" onclick="onCommentSubmit()">
+                </div>
+            </fieldset>
+        </form>
+    {% endif %}
+        <div class='article-comments' style="display: none;">
+            <div class="title">Комментарии</div>
+        </div>
+    </div>
+    <div class="span1">&nbsp;</div>
     <script type="text/template" id="comment-template">
-        <div class="comment" data-cid="<%= cid %>">
-            <div class="comment-header">
+        <div class="event-comment" data-cid="<%= cid %>">
+            <div class="header">
                 <b><%= author_name %></b>&nbsp;<small>(<%= date %>)&nbsp;</small>
-                {% if user.id == post.author.id %}<small><a class="comment-delete-link" href="#">удалить</a></small>{% endif %}
+                {% if user.id == post.author.id %}<small><a class="delete-link" href="#">удалить</a></small>{% endif %}
             </div>
-            <div class="comment-body"><%= msg %></div>
+            <div class="body"><%= msg %></div>
         </div>
     </script>
 {% endblock %}

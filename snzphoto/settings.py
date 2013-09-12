@@ -197,6 +197,6 @@ LOGGING = {
     }
 }
 
-NEWS_PER_PAGE = 10
+NEWS_PER_PAGE = 3
 RECAPCHA_API_KEY = "a-p-i-k-e-y"
 RECAPCHA_PRIVATE_API_KEY = "p-r-i-v-a-t-e-k-e-y"

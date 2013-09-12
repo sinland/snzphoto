@@ -22,11 +22,12 @@ class VideoPost(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            tmp_uid = translit(self.title)
-            similar = VideoPost.objects.filter(uid=tmp_uid).count()
-            if similar > 0:
-                tmp_uid = "%s-%d" % (tmp_uid, similar + 1)
-            self.uid = tmp_uid
+            tmp_uid = uniq_uid = translit(self.title)
+            seed = 1
+            while VideoPost.objects.filter(uid=uniq_uid).count() > 0:
+                uniq_uid = "%s-%d" % (tmp_uid, seed)
+                seed += 1
+            self.uid = uniq_uid
         super(VideoPost, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

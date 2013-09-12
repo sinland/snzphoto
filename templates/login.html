@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load url from future %}
+{% load staticfiles %}
+{% block page_title %}Вход{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="span2">&nbsp;</div>
+    <div class="span8">
+        <div class="frm-login">
+            {% if error %}<div class="alert alert-error" data-dismiss="alert">{{ error }}</div>{% endif %}
+        <form action="" method="post">
+            {% csrf_token %}
+            <label for="">Логин:</label>
+            <input type="text" name="username" class="input-medium">
+            <label for="">Пароль:</label>
+            <input type="password" name="password" class="input-medium">
+            <input type="submit" value="">
+        </form>
+        </div>
+    </div>
+    <div class="span2">&nbsp;</div>
+{% endblock %}

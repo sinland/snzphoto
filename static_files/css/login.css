@@ -1,0 +1,28 @@
+.frm-login{
+    margin: 50px 0 50px 0;
+    text-align: left;
+}
+.frm-login form {
+    margin: 0 0 0 35%;
+    width: 200px;
+}
+.frm-login label {
+    font-weight: bold;
+    margin: 0 0 0 0px;
+    font-size: 1.1em;
+}
+.frm-login input[type='text'],
+.frm-login input[type='password']{
+    border-radius: 0px;
+    border-color: #000;
+    margin: 0px 0px 10px 0px;
+    width: 200px;
+    height: 27px;
+}
+.frm-login input[type='submit']{
+    border: 0 #fff none;
+    background: url('/static/img/login-btn.png') no-repeat left center;
+    width: 123px;
+    height: 27px;
+    margin-top: 15px;
+}

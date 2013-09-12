@@ -1,0 +1,80 @@
+.site-background {
+    background: url('/static/img/intro-bg.png') no-repeat;
+    height: 1200px;
+    background-color: #dadbdc;
+    position: relative;
+}
+.intro-header{
+    background: url('/static/img/title.png') no-repeat center center;
+    height: 250px;
+}
+.intro-content{
+    margin: 50px 150px 20px 150px;
+    text-align: center;
+}
+.intro-nav-events,
+.intro-nav-forum,
+.intro-nav-photos,
+.intro-nav-videos {
+    width: 320px;
+    height: 148px;
+    display: inline-block;
+    cursor: pointer;
+    margin: 50px;
+}
+.intro-nav-events {
+    background: url('/static/img/intro-events.png') no-repeat center center;
+}
+.intro-nav-events:hover {
+    background: url('/static/img/intro-events-over.png') no-repeat center center;
+}
+.intro-nav-forum{
+    background: url('/static/img/intro-forum.png') no-repeat center center;
+}
+.intro-nav-forum:hover{
+    background: url('/static/img/intro-forum-over.png') no-repeat center center;
+}
+.intro-nav-photos{
+    background: url('/static/img/intro-photo.png') no-repeat center center;
+}
+.intro-nav-photos:hover{
+    background: url('/static/img/intro-photo-over.png') no-repeat center center;
+}
+.intro-nav-videos{
+    background: url('/static/img/intro-video.png') no-repeat center center;
+}
+.intro-nav-videos:hover{
+    background: url('/static/img/intro-video-over.png') no-repeat center center;
+}
+.intro-footer {
+    background:
+        url('/static/img/footer.png') no-repeat bottom right,
+        url('/static/img/footer-rep.png') repeat-x;
+    position: absolute;
+    bottom: 0px;
+    height: 173px;
+    width: 100%;
+    background-color: #dadbdc;
+}
+@media (max-width: 1200px){
+    .intro-nav-events,
+    .intro-nav-forum,
+    .intro-nav-photos,
+    .intro-nav-videos {
+        margin: 20px 100px 10px 100px;
+    }
+}
+@media (max-width: 979px) {
+    .intro-footer{
+        height: 145px;
+        background:
+            url('/static/img/footer-small.png') no-repeat bottom right,
+            url('/static/img/footer-rep-small.png') repeat-x;
+    }
+    .intro-nav-events,
+    .intro-nav-forum,
+    .intro-nav-photos,
+    .intro-nav-videos {
+        margin: 20px;
+    }
+}

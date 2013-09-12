@@ -23,6 +23,18 @@ def index(r, page='1'):
         view_news = paginator.page(paginator.num_pages)
 
     section = 'news'
+
+    if view_news.number - 1 > 2:
+        first_page = 1 # первая страница стоит отдельно
+    if paginator.num_pages - view_news.number > 2:
+        last_page = paginator.num_pages # последняя страница стоит отдельно
+    pages_range = paginator.page_range[view_news.number:view_news.number+3]
+    left_range = view_news.number-3
+    if left_range < 0:
+        left_range = 0
+    for p in paginator.page_range[left_range:view_news.number]:
+        pages_range.append(p)
+    pages_range.sort()
     response = render(r, 'news/index.html', locals())
     response.set_cookie('last_viewed_newspage', page)
     return response
@@ -36,6 +48,8 @@ def show_post(r, post_uid):
             return_page = int(r.COOKIES['last_viewed_newspage'])
         except ValueError:
             return_page = 1
+    else:
+        return_page = 1
     if r.user.is_authenticated():
         comment_username = r.user
     elif 'comment_username' in r.COOKIES:
@@ -43,8 +57,8 @@ def show_post(r, post_uid):
     else:
         comment_username = ""
     response = render(r, 'news/post_details.html', locals())
-    if 'last_viewed_newspage' in r.COOKIES:
-        response.delete_cookie('last_viewed_newspage')
+#    if 'last_viewed_newspage' in r.COOKIES:
+#        response.delete_cookie('last_viewed_newspage')
     return response
 
 @never_cache

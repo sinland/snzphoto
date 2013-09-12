@@ -1,0 +1,121 @@
+/* ----------------------- Evens articles ---------------------------------------*/
+.article{
+    margin: 60px 0px 30px 0px;
+    padding: 20px;
+    border: 1px #ddd solid;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    position: relative;
+}
+.article > div.header {
+    position: absolute;
+    top: -35px;
+    left: 10px;
+    font-size: 1.6em;
+}
+.article > div.text {
+    padding: 10px 10px 10px 0px;
+}
+.article > div.attachment {
+    margin: 10px 10px 10px 0px;
+}
+.article img {
+    width: 300px;
+}
+.article div.return-btn {
+    margin: 20px 10px 10px 0px;
+}
+/*.article-underline{*/
+    /*font-size: 0.9em;*/
+    /*font-style: italic;*/
+/*}*/
+
+.article-comments {
+    position: relative;
+    padding: 20px 0 0 0;
+}
+.article-comments > div.title{
+    font-size: 1.4em;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+.event-comment{
+    padding: 20px 0 0 10px;
+    border-bottom: 1px #7598bc solid;
+    margin: 0 0 20px 0;
+}
+
+.event-comment > div.header {
+
+}
+.event-comment > div.body {
+    padding: 20px 0px 10px 10px;
+}
+.event-comment a.delete-link {
+
+}
+/* -----------------------------  events index ----------------------------- */
+.event-list-item {
+    margin: 70px 100px 100px 100px;
+    padding: 20px;
+    border: 1px #ddd solid;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0px 0px 5px 2px #DDD;
+    -moz-box-shadow: 0px 0px 5px 2px #DDD;
+    -webkit-box-shadow: 0px 0px 5px 2px #DDD;
+    position: relative;
+}
+.event-list-item div.title {
+    display: inline-block;
+    position: absolute;
+    top: -30px;
+    left: 10px;
+}
+.event-list-item img {
+    width: 350px;
+}
+.event-list-item div.title > a{
+    color: #000;
+    font-size: 1.25em;
+}
+.event-list-item a:first-child:hover {
+    text-decoration: none;
+}
+.event-list-item div:last-child {
+    position: absolute;
+    bottom: -30px;
+    right: 0px;
+    color: #808080;
+}
+.event-list-item div:last-child a {
+    font-weight: bold;
+}
+.event-list-item div:nth-child(2) {
+    padding: 0px 0px 10px 0px;
+}
+
+.events-pagination {
+    padding: 0 80px 50px 80px;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+.events-pagination a {
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    color: #556f8a;
+    width: 20px;
+}
+.events-pagination a:hover {
+    background-color: #7598bc;
+    text-decoration: none;
+}
+.events-pagination a.current {
+    background-color: #556f8a;
+    color: #fff;
+}
