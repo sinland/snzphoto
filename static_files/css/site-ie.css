@@ -1,1 +1,10 @@
 .container {width: 1170px;}
+.site-footer {
+    background:url('/static/img/footer.png') no-repeat center right;
+    height: 173px;
+    width: 100%;
+    -webkit-border-radius: 0 0 10px 10px;
+    -moz-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px;
+    border: 1px #bec0c2 solid;
+}

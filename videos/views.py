@@ -21,6 +21,17 @@ def index(r, page='1'):
         articles = paginator.page(paginator.num_pages)
 
     section = "video"
+    if articles.number - 1 > 2:
+        first_page = 1 # первая страница стоит отдельно
+    if paginator.num_pages - articles.number > 3:
+        last_page = paginator.num_pages # последняя страница стоит отдельно
+    pages_range = paginator.page_range[articles.number:articles.number+3]
+    left_range = articles.number-3
+    if left_range < 0:
+        left_range = 0
+    for p in paginator.page_range[left_range:articles.number]:
+        pages_range.append(p)
+    pages_range.sort()
     response = render(r, 'videos/index.html', locals())
     response.set_cookie('last_viewed_videospage', page)
     return response

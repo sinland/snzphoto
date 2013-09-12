@@ -13,6 +13,7 @@ from snzphoto.utils import get_json_response
 
 @never_cache
 def index(r, page='1'):
+    section = 'forum'
     paginator = Paginator(DiscussionPost.objects.all().order_by('-creation_date', 'author'), settings.NEWS_PER_PAGE)
     try:
         view_news = paginator.page(page)
@@ -21,14 +22,25 @@ def index(r, page='1'):
     except EmptyPage:
         view_news = paginator.page(paginator.num_pages)
 
-    section = 'debates'
+    if view_news.number - 1 > 2:
+        first_page = 1 # первая страница стоит отдельно
+    if paginator.num_pages - view_news.number > 3:
+        last_page = paginator.num_pages # последняя страница стоит отдельно
+    pages_range = paginator.page_range[view_news.number:view_news.number+3]
+    left_range = view_news.number-3
+    if left_range < 0:
+        left_range = 0
+    for p in paginator.page_range[left_range:view_news.number]:
+        pages_range.append(p)
+    pages_range.sort()
+
     response = render(r, 'debates/index.html', locals())
     response.set_cookie('last_viewed_forumpage', page)
     return response
 
 @never_cache
 def details(r, id):
-    section = 'debates'
+    section = 'forum'
     post = get_object_or_404(DiscussionPost, pk=id)
     if 'last_viewed_forumpage' in r.COOKIES:
         try:
@@ -42,8 +54,6 @@ def details(r, id):
     else:
         comment_username = ""
     response = render(r, 'debates/post_details.html', locals())
-    if 'last_viewed_forumpage' in r.COOKIES:
-        response.delete_cookie('last_viewed_forumpage')
     return response
 
 @never_cache

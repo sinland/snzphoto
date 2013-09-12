@@ -28,7 +28,7 @@ def index(request, page = 1):
     if not request.user.is_authenticated():
         return HttpResponseForbidden(render_to_string('forbidden.html', context_instance=RequestContext(request)))
 
-    paginator = Paginator(DiscussionPost.objects.all().order_by('-creation_date', 'author'), settings.NEWS_PER_PAGE)
+    paginator = Paginator(DiscussionPost.objects.all().order_by('-creation_date', 'author'), 15)
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:

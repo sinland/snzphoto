@@ -121,14 +121,14 @@ a.lb-close img:hover {
 }
 .site-navbar-forum {
     background: url('/static/img/nav-forum.png') no-repeat center center;
-    width: 97px;
+    width: 95px;
 }
 .site-navbar-forum:hover {
     background: url('/static/img/nav-forum-over.png') no-repeat center center;
 }
 .site-navbar-forum-on {
-    background: url('/static/img/nav-forum.png') no-repeat center center;
-    width: 97px;
+    background: url('/static/img/nav-forum-on.png') no-repeat center center;
+    width: 95px;
 }
 .site-navbar-login {
     background: url('/static/img/nav-login.png') no-repeat center center;
@@ -172,7 +172,7 @@ a.lb-close img:hover {
     .site-navbar-main {
         margin: 5px;
     }
-    .site-footer{
+    .site-footer {
         height: 145px;
         background:
             url('/static/img/footer-small.png') no-repeat bottom right,

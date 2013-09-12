@@ -26,7 +26,7 @@ def index(r, page='1'):
 
     if view_news.number - 1 > 2:
         first_page = 1 # первая страница стоит отдельно
-    if paginator.num_pages - view_news.number > 2:
+    if paginator.num_pages - view_news.number > 3:
         last_page = paginator.num_pages # последняя страница стоит отдельно
     pages_range = paginator.page_range[view_news.number:view_news.number+3]
     left_range = view_news.number-3

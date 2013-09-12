@@ -1,5 +1,5 @@
-/* ----------------------- Evens articles ---------------------------------------*/
-.article{
+/* ----------------------- forum entry details ---------------------------------------*/
+.article {
     margin: 60px 0px 30px 0px;
     padding: 20px;
     border: 1px #ddd solid;
@@ -19,6 +19,7 @@
 }
 .article > div.attachment {
     margin: 10px 10px 10px 0px;
+    text-align: center;
 }
 .article img {
     width: 300px;
@@ -26,38 +27,8 @@
 .article div.return-btn {
     margin: 20px 10px 10px 0px;
 }
-/*.article-underline{*/
-    /*font-size: 0.9em;*/
-    /*font-style: italic;*/
-/*}*/
-
-.article-comments {
-    position: relative;
-    padding: 20px 0 0 0;
-}
-.article-comments > div.title{
-    font-size: 1.4em;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-.event-comment{
-    padding: 20px 0 0 10px;
-    border-bottom: 1px #7598bc solid;
-    margin: 0 0 20px 0;
-}
-
-.event-comment > div.header {
-
-}
-.event-comment > div.body {
-    padding: 20px 0px 10px 10px;
-}
-.event-comment a.delete-link {
-
-}
-/* -----------------------------  events index ----------------------------- */
-.event-list-item {
+/* -----------------------------  video index ----------------------------- */
+.video-list-item {
     margin: 70px 100px 100px 100px;
     padding: 20px;
     border: 1px #888 solid;
@@ -66,54 +37,54 @@
     -webkit-border-radius: 5px;
     position: relative;
 }
-.event-list-item div.title {
+.video-list-item div.title {
+    font-size: 1.2em;
     display: inline-block;
     position: absolute;
-    font-size: 1.2em;
     top: -35px;
     left: 10px;
 }
-.event-list-item img {
+.video-list-item img {
     width: 350px;
 }
-.event-list-item div.title > a{
+.video-list-item div.title > a{
     color: #000;
     font-size: 1.25em;
 }
-.event-list-item a:first-child:hover {
+.video-list-item a:first-child:hover {
     text-decoration: none;
 }
-.event-list-item div:last-child {
-    position: absolute;
-    bottom: -30px;
-    right: 0px;
-    color: #808080;
+.video-list-item div:last-child {
+    /*position: absolute;*/
+    /*bottom: -30px;*/
+    /*right: 0px;*/
+    /*color: #808080;*/
 }
-.event-list-item div:last-child a {
-    font-weight: bold;
+.video-list-item div:last-child a {
+    /*font-weight: bold;*/
 }
-.event-list-item div:nth-child(2) {
+.video-list-item div:nth-child(2) {
     padding: 0px 0px 10px 0px;
 }
 
-.events-pagination {
+.video-pagination {
     padding: 0 80px 50px 80px;
     text-align: center;
     font-size: 1.3em;
 }
 
-.events-pagination a {
+.video-pagination a {
     padding: 5px;
     text-align: center;
     display: inline-block;
     color: #556f8a;
     width: 20px;
 }
-.events-pagination a:hover {
+.video-pagination a:hover {
     background-color: #7598bc;
     text-decoration: none;
 }
-.events-pagination a.current {
+.video-pagination a.current {
     background-color: #556f8a;
     color: #fff;
 }

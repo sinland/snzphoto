@@ -1,30 +1,35 @@
 {% extends "videos/base.html" %}
 {% load url from future %}
-
+{%  load staticfiles %}
+{% block head %}<link rel="stylesheet" href="{% static 'css/video.css' %}">{% endblock %}
 {% block content %}
     {% if articles|length == 0 %}
         <div>Нет записей</div>
     {% else %}
         {% for post in articles %}
-            <div class='news_post'>
-                <a href="{% url 'videos:show_post' post.uid %}">{{ post.title|upper }}</a> ({{ post.author|capfirst }}; {{ post.creation_date|date:"d.m.Y в H:i" }}) ({{ post.comments_count }})<br/>
-                <span>{{ post.text|safe|truncatewords_html:20 }}</span>
+            <div class='video-list-item'>
+                <div class="title"><a href="{% url 'videos:show_post' post.uid %}">{{ post.title|upper }}</a></div>
+                <div>{{ post.text|safe }}</div>
+                <div>&nbsp;</div>
+                <a class="btn btn-primary" href="{% url 'videos:show_post' post.uid %}">Просмотр</a>
             </div>
         {% endfor %}
-        {% if articles.paginator.num_pages > 1 %}
-            <div class="pagination">
-                <span class="step-links">
-                    {% if articles.has_previous %}
-                        <a href="{% url 'videos:paged_index' articles.previous_page_number %}">&larr;</a>
-                    {% endif %}
 
-                    <span class="current">
-                        Page {{ articles.number }} of {{ articles.paginator.num_pages }}.
-                    </span>
-                    {% if articles.has_next %}
-                        <a href="{% url 'videos:paged_index' articles.next_page_number %}">&rarr;</a>
+        {% if articles.paginator.num_pages > 1 %}
+            <div class="video-pagination">
+                {% if first_page %}
+                    <a href="{% url 'videos:paged_index' first_page %}">{{ first_page }}</a> &larr;
+                {% endif %}
+                {% for page_num in pages_range %}
+                    {% if page_num == articles.number %}
+                        <a class="current" href="{% url 'videos:paged_index' page_num %}">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{% url 'videos:paged_index' page_num %}">{{ page_num }}</a>
                     {% endif %}
-                </span>
+                {% endfor %}
+                {% if last_page %}
+                    &rarr;<a href="{% url 'videos:paged_index' last_page %}">{{ last_page }}</a>
+                {% endif %}
             </div>
         {% endif %}
     {% endif %}

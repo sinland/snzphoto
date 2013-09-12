@@ -23,7 +23,7 @@ CACHES = {
         'LOCATION': 'd:/Development/python/snzphoto/cache_files',
         }
 }
-IMG_THUMBS_SIZE = (256, 256)
+IMG_THUMBS_SIZE = (350, 350)
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
