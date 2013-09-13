@@ -1,7 +1,6 @@
 .idea
 *.pyc
 *snzphotosite.log
-*snzphotosite.s3db
 runserver.cmd
 todo.txt
 cache_files/
