@@ -10,8 +10,6 @@ from recaptcha.client import captcha
 from snzphoto import settings
 from snzphoto.utils import get_json_response
 
-#todo: новости: сделать капчу на добавление комментария
-
 @never_cache
 def index(r, page='1'):
     paginator = Paginator(NewsPost.objects.all().order_by('-creation_date', 'author'), settings.NEWS_PER_PAGE)

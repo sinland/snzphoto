@@ -8,8 +8,6 @@ from videos.models import *
 from snzphoto import settings
 from snzphoto.utils import get_json_response
 
-#todo: видео: сделать капчу на добавление комментария
-
 @never_cache
 def index(r, page='1'):
     paginator = Paginator(VideoPost.objects.all().order_by('-creation_date', 'author'), settings.NEWS_PER_PAGE)
