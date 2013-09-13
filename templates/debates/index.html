@@ -16,7 +16,7 @@
         </div>
     {% endfor %}
     {% if view_news.paginator.num_pages > 1 %}
-        <div class="forum-pagination">
+        <div class="site-pagination">
             {% if first_page %}
                 <a href="{% url 'debates:paged_index' first_page %}">{{ first_page }}</a> &larr;
             {% endif %}

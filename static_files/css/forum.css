@@ -51,11 +51,31 @@
 .comment a.delete-link {
 
 }
+
+form#frm-comment div.frm-control {
+    position: relative;
+}
+form#frm-comment div.submit-btn,
+form#frm-comment div.frm-control > div {
+    padding-left: 50px;
+}
+form#frm-comment div.frm-control > label{
+    position: absolute;
+    left: 0px;
+    top: 4px;
+}
+form#frm-comment div.frm-control textarea {
+    width: 600px;
+    height: 100px;
+}
+form#frm-comment div.submit-btn {
+    margin-top: 10px;
+}
 /* -----------------------------  forum index ----------------------------- */
 .forum-list-item {
     margin: 70px 100px 100px 100px;
     padding: 20px;
-    border: 1px #888 solid;
+    border: 1px #7598bc solid;
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -89,26 +109,4 @@
 }
 .forum-list-item div:nth-child(2) {
     padding: 0px 0px 10px 0px;
-}
-
-.forum-pagination {
-    padding: 0 80px 50px 80px;
-    text-align: center;
-    font-size: 1.3em;
-}
-
-.forum-pagination a {
-    padding: 5px;
-    text-align: center;
-    display: inline-block;
-    color: #556f8a;
-    width: 20px;
-}
-.forum-pagination a:hover {
-    background-color: #7598bc;
-    text-decoration: none;
-}
-.forum-pagination a.current {
-    background-color: #556f8a;
-    color: #fff;
 }

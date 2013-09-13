@@ -2,7 +2,7 @@
 {% load url from future %}
 {% block page_title %}Обсуждения{% endblock %}
 {% block content %}
-    <h4>Обсуждения</h4>
+    <h4>Форум</h4>
     <a href="{% url 'management:debates_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Начать новую тему</a>
     {% if posts|length > 0 %}
         <div>

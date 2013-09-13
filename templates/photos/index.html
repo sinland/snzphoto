@@ -10,38 +10,43 @@
             <div class='photoalbum'>
                 <div class="photoalbum-title"><a href="{% url 'photos:details' album.id %}">{{ album.title }}</a></div>
                 <div class="photoalbum-underline">{{ album.author }} | {{ album.creation_date|date:"d.m.Y в H:i" }} | {{ album.photos_count }} фото</div>
-                <div class="photoalbum-summary">
-{#                    <img src="{% static 'img/blank.png' %}" alt="">#}
-                    {% for url in album.get_random_pics_url %}
-                        <img src="{{ url }}">
-                    {% endfor %}
-                    <div class="description">
-                        {{ album.description|safe|truncatewords_html:100 }}
-                        <a href="{% url 'photos:details' album.id %}" class="btn btn-mini">Открыть...</a>
-                    </div>
-
-                </div>
-
+                <table class="photoalbum-info">
+                    <tr>
+                        <td class="preview">
+                        {% if album.photos_count > 0 %}
+                            {% for url in album.get_random_pics_url %}
+                                <img class="img-polaroid" src="{{ url }}">
+                            {% endfor %}
+                            <a href="{% url 'photos:details' album.id %}" class="btn btn-primary">Просмотр</a>
+                        {% else %}
+                            <img class="img-polaroid" src="{% static 'img/blank.png' %}">
+                        {% endif %}
+                        </td>
+                        <td class="desc">
+                            {{ album.description|safe|truncatewords_html:100 }}
+                        </td>
+                    </tr>
+                </table>
             </div>
         {% endfor %}
         {% if albums.paginator.num_pages > 1 %}
-            <div class="pagination">
-                <span class="step-links">
-                    {% if album.has_previous %}
-                        <a href="{% url 'news:paged_index' album.previous_page_number %}">&larr;</a>
+            <div class="site-pagination">
+                {% if first_page %}
+                    <a href="{% url 'photos:paged_index' first_page %}">{{ first_page }}</a> &larr;
+                {% endif %}
+                {% for page_num in pages_range %}
+                    {% if page_num == albums.number %}
+                        <a class="current" href="{% url 'photos:paged_index' page_num %}">{{ page_num }}</a>
+                    {% else %}
+                        <a href="{% url 'photos:paged_index' page_num %}">{{ page_num }}</a>
                     {% endif %}
-
-                    <span class="current">
-                        Page {{ album.number }} of {{ album.paginator.num_pages }}.
-                    </span>
-                    {% if album.has_next %}
-                        <a href="{% url 'news:paged_index' album.next_page_number %}">&rarr;</a>
-                    {% endif %}
-                </span>
+                {% endfor %}
+                {% if last_page %}
+                    &rarr;<a href="{% url 'photos:paged_index' last_page %}">{{ last_page }}</a>
+                {% endif %}
             </div>
         {% endif %}
-        {% else %}
+    {% else %}
         <span>Нет альбомов</span>
     {% endif %}
-
 {% endblock %}

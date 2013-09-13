@@ -32,7 +32,7 @@ class PhotoAlbum(models.Model):
         return photo
 
     def get_random_pics_url(self):
-        pics_count = 3
+        pics_count = 1
         total = self.photos_count()
         if total == 0:
             return []

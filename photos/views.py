@@ -17,6 +17,19 @@ def index(request, page=1):
         albums = paginator.page(paginator.num_pages)
 
     section = "photo"
+
+    if albums.number - 1 > 2:
+        first_page = 1 # первая страница стоит отдельно
+    if paginator.num_pages - albums.number > 3:
+        last_page = paginator.num_pages # последняя страница стоит отдельно
+    pages_range = paginator.page_range[albums.number:albums.number+3]
+    left_range = albums.number-3
+    if left_range < 0:
+        left_range = 0
+    for p in paginator.page_range[left_range:albums.number]:
+        pages_range.append(p)
+    pages_range.sort()
+
     response = render(request, 'photos/index.html', locals())
     response.set_cookie('last_viewed_gallerypage', page)
     return response

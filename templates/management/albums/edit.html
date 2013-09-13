@@ -45,7 +45,9 @@
     </form>
     <h4>Фотографиии</h4>
     <div class='album-photos-preview'><img src="{% static 'img/loading_small.gif' %}" alt=""></div>
-    <div style="margin: 10px; margin-left: 0px;;"><a href="{% url 'management:albums_uploads' album.id %}" class="btn btn-primary btn-small">Добавить фотографии в альбом&nbsp;<i class="icon-upload icon-white"></i></a></div>
+    <div style="margin: 10px 10px 10px 0;">
+        <a href="{% url 'management:albums_uploads' album.id %}" class="btn btn-primary btn-small">Добавить фотографии в альбом&nbsp;<i class="icon-upload icon-white"></i></a>
+    </div>
     <script type="text/javascript">
         function factoryDeleteClickHanlder(url){
             return function(){

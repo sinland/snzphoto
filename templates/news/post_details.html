@@ -113,7 +113,6 @@
         {% if post.enclosure %}
             <div class="attachment"><a href="{{ post.attach_full_url }}" rel="lightbox" title="Прикрепленное изображение"><img class="img-polaroid" src="{{ post.attach_full_url }}"></a></div>
         {% endif %}
-{#        <div class="article-underline">{{ post.author }} {{ post.creation_date|date:"H:i d.m.Y" }}</div>#}
         <div class="return-btn">
             <input type="button" value="&larr;&nbsp;Назад к событиям" class="btn btn-small" onclick="javascript:document.location='{% if return_page %}{% url 'news:paged_index' return_page %}{% else %}{% url 'news:index' %}{% endif %}'">
         </div>
@@ -122,17 +121,17 @@
         <form id="frm-comment" action="{% url 'news:add_comment' post.id %}" method="post">
             <legend>Добавить комментарий</legend>
             <fieldset>
-                <div style="position: relative;">
-                    <div style='padding-left: 50px;'>
+                <div class="frm-control">
+                    <div>
                         <input type="text" name='author_name' value="{{ comment_username }}" class="">
                     </div>
-                    <label style="position: absolute; left: 0px; top: 5px">Имя</label>
+                    <label>Имя</label>
                 </div>
-                <div style="position: relative;">
-                    <div style='padding-left: 50px;'>
-                        <textarea name='msg' value="" class="" style="width: 600px; height: 100px;"></textarea>
+                <div class="frm-control">
+                    <div>
+                        <textarea name='msg' value=""></textarea>
                     </div>
-                    <label style="position: absolute; left: 0px; top: 5px">Текст</label>
+                    <label>Текст</label>
                 </div>
                 {% csrf_token %}
                 {#            <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k={{ recapcha_api_key }}"></script>#}
@@ -141,10 +140,10 @@
                 {#                <textarea name="recaptcha_challenge_field" cols="40" rows="3"></textarea>#}
                 {#                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">#}
                 {#            </noscript>#}
-                <div style="padding-left: 50px; margin-top: 10px;">
+                <div class="frm-control">
                     <div id="recapcha_container"></div>
                 </div>
-                <div style="padding-left: 50px; margin-top: 10px;">
+                <div class="submit-btn">
                     <input type="button" value="Отправить" class="btn" onclick="onCommentSubmit()">
                 </div>
             </fieldset>

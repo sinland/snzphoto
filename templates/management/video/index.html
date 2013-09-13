@@ -2,6 +2,7 @@
 {% load url from future %}
 
 {% block content %}
+    <h4>Видео</h4>
     <a href="{% url 'management:video_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Добавить видео</a>
     {% if videos|length > 0 %}
         <div>

@@ -16,7 +16,7 @@
         {% endfor %}
 
         {% if articles.paginator.num_pages > 1 %}
-            <div class="video-pagination">
+            <div class="site-pagination">
                 {% if first_page %}
                     <a href="{% url 'videos:paged_index' first_page %}">{{ first_page }}</a> &larr;
                 {% endif %}

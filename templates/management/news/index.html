@@ -1,7 +1,7 @@
 {% extends 'manager_base.html' %}
 {% load url from future %}
 {% block content %}
-    <h4>Новости сайта</h4>
+    <h4>События</h4>
     <a href="{% url 'management:news_add' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новую запись</a>
     {% if news|length > 0 %}
         <div>

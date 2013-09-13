@@ -2,7 +2,7 @@
 {% load url from future %}
 
 {% block content %}
-    <h4>Галерея</h4>
+    <h4>Выставки</h4>
     <a href="{% url 'management:albums_create' %}" class="btn btn-small"><i class="icon-file"></i>&nbsp;Создать новый альбом</a>
     {% if albums|length > 0 %}
         <div>

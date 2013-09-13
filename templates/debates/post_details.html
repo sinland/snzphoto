@@ -104,22 +104,22 @@
         <form id="frm-comment" action="{% url 'debates:add_comment' post.id %}" method="post">
             <legend>Добавить комментарий</legend>
             <fieldset>
-                <div style="position: relative;">
-                    <div style='padding-left: 50px;'>
-                        <input type="text" name='author_name' value="{{ comment_username }}" class="">
+                <div class="frm-control">
+                    <div>
+                        <input type="text" name='author_name' value="{{ comment_username }}">
                     </div>
-                    <label style="position: absolute; left: 0px; top: 5px">Имя</label>
+                    <label>Имя</label>
                 </div>
-                <div style="position: relative;">
-                    <div style='padding-left: 50px;'>
-                        <textarea name='msg' value="" class="" style="width: 600px; height: 100px;"></textarea>
+                <div class="frm-control">
+                    <div>
+                        <textarea name='msg' value=""></textarea>
                     </div>
-                    <label style="position: absolute; left: 0px; top: 5px">Текст</label>
+                    <label>Текст</label>
                 </div>
-                {% csrf_token %}
-                <div style="padding-left: 50px; margin-top: 10px;">
+                <div class="submit-btn">
                     <input type="button" value="Отправить" class="btn" onclick="onCommentSubmit()">
                 </div>
+                {% csrf_token %}
             </fieldset>
         </form>
     {% endif %}

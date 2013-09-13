@@ -1,7 +1,19 @@
 .photoalbum {
-    margin: 25px 0px 25px 0px;
+    margin: 70px 100px 100px 100px;
+    padding: 20px;
+    border: 1px #7598bc solid;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    position: relative;
 }
-.photoalbum-title {}
+.photoalbum-title {
+    display: inline-block;
+    position: absolute;
+    font-size: 1.2em;
+    top: -35px;
+    left: 10px;
+}
 .photoalbum-title a {
     color: #000;
     font-size: 1.25em;
@@ -10,21 +22,103 @@
 .photoalbum-summary {
     position: relative;
 }
-.photoalbum-summary > img {
-    width: 130px;
-    max-width: 130px;
+.photoalbum-underline {
+    position: absolute;
+    bottom: -30px;
+    right: 0px;
+    color: #808080;
+    font-size: 0.8em;
+}
+.photoalbum-info td.preview{
+    width: 280px;
+}
+.photoalbum-info td.preview > img{
+    width: 250px;
+    max-width: 250px;
     margin: 10px 10px 10px 0px;
     display: inline-block;
 }
-.photoalbum-summary .description {
-    margin: 10px 10px 10px 0px;
-    display: inline-block;
+.photoalbum-info td.preview > a{
+    margin: 10px 0 0 0;
+}
+.photoalbum-info td.desc{
     vertical-align: top;
-    width: 800px;
-}
-.photoalbum-summary .description a {
-    display: table;
-    margin-top: 10px;
 }
 
-.photoalbum-underline { font-size: 0.9em; font-style: italic;}
+/* --------- photo album details --------------- */
+.album{
+    margin: 20px 60px 20px 60px;
+}
+.album > a:first-child {
+    margin: 10px 0 20px 0;
+}
+.album-title {
+    font-size: 1.5em;
+    margin: 5px 5px 5px 0px;
+}
+.album-author {
+    font-style: italic;
+    font-size: 0.9em;
+}
+.album-description{
+    margin: 5px 0px 0px 0px;
+}
+.album-photo-view {
+    margin: 10px 10px 10px 0px;
+    display: inline-block;
+    position: relative;
+}
+.album-photo-view img {
+    width: 1024px;
+    max-width: 2014px;
+    text-align: center;
+}
+.album-photo-list {
+    width: 1024px;
+}
+.album-photo-list img {
+    margin: 5px 10px 5px 10px;
+}
+.album-photo-thumbnail {
+    display: inline-block;
+    margin: 10px;
+}
+.album-photo-description{
+    margin-left: 43%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.album-photo-absent {
+    padding: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+@media (max-width: 1210px) {
+    .album-photo-view img {
+        width: 800px;
+        max-width: 800px;
+        text-align: center;
+    }
+    .album-photo-list {
+        width: 800px;
+        max-width: 800px;
+        text-align: center;
+    }
+    .album-photo-list img {
+        margin: 10px 30px 10px 30px;
+    }
+}
+@media (max-width: 979px) {
+    .album-photo-view img {
+        width: 600px;
+        max-width: 600px;
+        text-align: center;
+    }
+    .album-photo-list {
+        width: 600px;
+        text-align: center;
+    }
+    .album-photo-list img {
+        margin: 10px 30px 10px 30px;
+    }
+}

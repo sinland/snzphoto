@@ -77,9 +77,9 @@ a.lb-close img:hover {
     width: 108px;
     height: 41px;
     cursor: pointer;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 .site-navbar-main {
     background: url('/static/img/nav-main.png') no-repeat center center;
@@ -143,7 +143,7 @@ a.lb-close img:hover {
 }
 .site-navbar-mgr {
     background: url('/static/img/nav-mgr.png') no-repeat center center;
-    width: 119px;
+    width: 115px;
 }
 .site-navbar-mgr:hover {
     background: url('/static/img/nav-mgr-over.png') no-repeat center center;
@@ -160,7 +160,31 @@ a.lb-close img:hover {
     border: 1px #bec0c2 solid;
 }
 
+.site-pagination {
+    padding: 0 80px 50px 80px;
+    text-align: center;
+    font-size: 1.3em;
+}
+.site-pagination a {
+    padding: 5px;
+    text-align: center;
+    display: inline-block;
+    color: #556f8a;
+    width: 20px;
+}
+.site-pagination a:hover {
+    background-color: #7598bc;
+    text-decoration: none;
+}
+.site-pagination a.current {
+    background-color: #556f8a;
+    color: #fff;
+}
+
 @media (max-width: 979px) {
+    .site-header-title {
+        height: 180px;
+    }
     .site-navbar {
         margin: 0;
     }
