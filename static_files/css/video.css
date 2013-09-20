@@ -28,6 +28,13 @@
     margin: 20px 10px 10px 0px;
 }
 /* -----------------------------  video index ----------------------------- */
+table.video-list-item-info td{
+    vertical-align: top;
+    padding: 10px;
+}
+table.video-list-item-info td  a{
+    margin: 20px 0 0 0;
+}
 .video-list-item {
     margin: 70px 100px 100px 100px;
     padding: 20px;
@@ -45,7 +52,7 @@
     left: 10px;
 }
 .video-list-item img {
-    width: 350px;
+    max-width: 200px;
 }
 .video-list-item div.title > a{
     color: #000;

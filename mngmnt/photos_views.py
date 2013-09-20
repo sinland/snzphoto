@@ -177,7 +177,7 @@ def upload_photo_handler(request, aid):
         return get_script_response(code=400, rid=rid, uid='File format not supported', thumb_url='')
 
     hash_base = "%s-%s-%s-%s" % (f.name, datetime.datetime.now().isoformat(' '), request.META['HTTP_USER_AGENT'], request.META['REMOTE_ADDR'])
-    uid = hashlib.sha1(hash_base).hexdigest()
+    uid = hashlib.sha1(hash_base.encode('utf-8')).hexdigest()
     ext = f.name.split('.')[-1]
     if len(ext) > 5:
         ext = ext[0:2]

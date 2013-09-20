@@ -9,12 +9,16 @@
         {% for post in articles %}
             <div class='video-list-item'>
                 <div class="title"><a href="{% url 'videos:show_post' post.uid %}">{{ post.title|upper }}</a></div>
-                <div>{{ post.text|safe }}</div>
+                <table class="video-list-item-info">
+                    <tr>
+                        <td><img class="img-polaroid" src="{{ post.get_preview_url }}"><br><a class="btn btn-primary" href="{% url 'videos:show_post' post.uid %}">Просмотр</a></td>
+                        <td>{{ post.text|safe }}</td>
+                    </tr>
+                </table>
                 <div>&nbsp;</div>
-                <a class="btn btn-primary" href="{% url 'videos:show_post' post.uid %}">Просмотр</a>
+
             </div>
         {% endfor %}
-
         {% if articles.paginator.num_pages > 1 %}
             <div class="site-pagination">
                 {% if first_page %}

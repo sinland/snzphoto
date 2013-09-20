@@ -9,6 +9,6 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
     url(r'^p/(?P<page>\d{1,10})/$', views.index, name='paged_index'),
     url(r'^(?P<id>\d+)/$', views.details, name='details'),
-    url(r'^(?P<id>\d+)/photo/(?P<pid>\d+)$', views.details, name='details_sel_photo'),
+    url(r'^(?P<id>\d+)/photo_(?P<photo_indx>\d+)$', views.details, name='details_sel_photo'),
 )
 

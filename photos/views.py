@@ -35,17 +35,35 @@ def index(request, page=1):
     return response
 
 @never_cache
-def details(request, id, pid=-1):
+def details(request, id, photo_indx=0):
     album = get_object_or_404(PhotoAlbum, pk=id)
     album.views_counter += 1;
     album.save()
     last_viewed_gallerypage = 1
     if 'last_viewed_gallerypage' in request.COOKIES:
         last_viewed_gallerypage = request.COOKIES['last_viewed_gallerypage']
+
+    cur_photo_indx = int(photo_indx)
+    all_photos = album.get_photos()
+
+    prev_i = None
+    if (cur_photo_indx - 1) >= 0:
+        prev_i = cur_photo_indx - 1
+
+    next_i = None
+    if cur_photo_indx + 1 < len(all_photos):
+        next_i = cur_photo_indx + 1
+
     photo = None
-    if pid >= 0:
-        photo = get_object_or_404(Photo, pk=pid)
+    if len(all_photos) > 0:
+        if cur_photo_indx >= 0:
+            photo = all_photos[cur_photo_indx]
+        else:
+            photo = all_photos[0]
+
     return render(request, 'photos/album_details.html', {
+        'next_i': next_i,
+        'prev_i': prev_i,
         'last_viewed_gallerypage' : last_viewed_gallerypage,
         'album' : album,
         'photo' : photo,

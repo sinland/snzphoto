@@ -75,8 +75,11 @@
                 </div>
             </div>
             {% csrf_token %}
+            <input type="hidden" id="token_uid">
+            <input type="hidden" id="flag_del_preview">
         </fieldset>
     </form>
+    <div id="attach">&nbsp;</div>
     <script type="text/javascript">
         function showPreviewClickHandler(e){
             e.preventDefault();
@@ -106,6 +109,55 @@
         function leavePage(e){
             document.location='{% url 'management:video_index' %}';
         }
+
+        /* image upload related data */
+        function onUploadFinished(code, uid, thumbName){
+            app.log('upload finished. code: ' + code + '; uid: ' + uid + '; file_name: ' + thumbName);
+            if(code == 0) {
+                showUploadedImage(thumbName, uid);
+            }
+            else {
+                app.log(uid);
+            }
+        }
+        function showUploadedImage(imgUrl, tokenUid){
+            var htmlContent = _.template($('#attach_img_template').html(), {'img_url' : imgUrl});
+            if(tokenUid) {
+                $('input#token_uid').val(tokenUid).attr('name', 'token_uid');
+            }
+            $('div#attach').addClass('form-horizontal').html(htmlContent).after($('<div class="clearfix">&nbsp;</div>'));
+        }
+        function showUploadForm(){
+            var uuid = app.genUuid();
+            var inputId = 'fl-' + uuid;
+            var formId = 'frm-' + uuid;
+            var iframeId = 'if-' + uuid;
+            var htmlContent = _.template($('#attach_frm_template').html(),
+                    {
+                        'inputId' : inputId ,
+                        'formId' : formId,
+                        'iframeId' : iframeId
+                    });
+            $('div#attach').removeClass('form-horizontal').html(htmlContent).nextAll('div.clearfix').remove();
+            $('#' + inputId).change(function(){
+                $('#' + formId).submit();
+            });
+        }
+        function onRemoveAttachClicked(e){
+            var token_uid = $('input#token_uid');
+            if(token_uid.val().length > 0){
+                // delete recently uploaded image
+                var uid = token_uid.val();
+                token_uid.attr('name', '').val('');
+                var csrf = $('input[name=csrfmiddlewaretoken]').val();
+                $.post('{% url 'management:video_delete_preview' %}', {'uid' : uid, 'csrfmiddlewaretoken' : csrf});
+            }
+            else{
+                // remove stored image
+                $('input#flag_del_preview').attr('name', 'flag_del_preview').val('true')
+            }
+            showUploadForm();
+        }
         $(document).ready(function(){
             $('.btn-primary').on('click', showPreviewClickHandler);
             $('.btn-cancel').bind('click', leavePage);
@@ -114,6 +166,40 @@
                 height: 100,
                 controls: "bold italic underline strikethrough link unlink"
             });
+            {% if post.has_preview %}
+                 showUploadedImage('{{ post.get_preview_url }}')
+            {% else %}
+                showUploadForm();
+            {% endif %}
         });
+
+    </script>
+    <script type="text/plain" id="attach_img_template">
+        <div style="control-group">
+            <label class="control-label">Прикрепленное изображение</label>
+            <div class="controls">
+                <div style="position: relative; display: inline-block;">
+                    <img src="<%= img_url %>" class="img-polaroid" alt="Прикрепленное изображение">
+                    <i onclick="onRemoveAttachClicked()" class="icon-remove ico-close" style="position: absolute; top: 0px; right: -20px;"></i>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script type="text/plain" id="attach_frm_template">
+        <form id="<%= formId %>" class="form-horizontal" action="{% url 'management:video_upload_preview' %}" method="post" target="<%= iframeId %>" enctype="multipart/form-data">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">Прикрепить файл:</label>
+                    <div class="controls">
+                        <div style="overflow: hidden; width: 150px; height: 50px; border: 0px; background-color: #fff;">
+                            <button type="button" class="btn">файл не выбран</button>
+                            <input id='<%= inputId %>' name='userfile' type='file' size='1' maxlength='1' style="margin-top: -50px; margin-left: -410px; -moz-opacity: 0; opacity: 0; filter: alpha(opacity=0); font-size: 150px; height: 50px;">
+                        </div>
+                    </div>
+                </div>
+                {% csrf_token %}
+            </fieldset>
+        </form>
+        <iframe src='' id='<%= iframeId %>' name='<%= iframeId %>' style='width: 0; height: 0; border: 0px solid #FFF'></iframe>
     </script>
 {% endblock %}

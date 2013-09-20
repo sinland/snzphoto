@@ -64,14 +64,34 @@
     margin: 5px 0px 0px 0px;
 }
 .album-photo-view {
-    margin: 10px 10px 10px 0px;
+    padding: 10px;
     display: inline-block;
     position: relative;
 }
 .album-photo-view img {
     width: 1024px;
-    max-width: 2014px;
+    max-width: 1024px;
     text-align: center;
+}
+
+.album-photo-view img.photo-prev,
+.album-photo-view img.photo-next {
+    width: auto;
+    position: absolute;
+    top: 50%;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+}
+.album-photo-view img.photo-prev:hover,
+.album-photo-view img.photo-next:hover {
+    opacity: 0.7;
+    filter: alpha(opacity=70);
+}
+.album-photo-view img.photo-prev {
+    left: -50px;
+}
+.album-photo-view img.photo-next {
+    right: -50px;
 }
 .album-photo-list {
     width: 1024px;

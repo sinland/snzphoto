@@ -34,3 +34,5 @@ class VideoPostForm(forms.Form):
     text = forms.CharField(widget=forms.Textarea)
     link = forms.CharField(max_length=1024, widget=forms.Textarea)
     uid = forms.CharField(max_length=256, required=False)
+    token_uid = forms.CharField(required=False)
+    flag_del_preview = forms.BooleanField(required=False)

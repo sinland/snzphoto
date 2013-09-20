@@ -189,6 +189,11 @@ LOGGING = {
             'level' : 'ERROR',
             'propagate' : True
         },
+        'manager-videos' : {
+            'handlers' : ['file_dump'],
+            'level' : 'INFO',
+            'propagate' : True
+        },
         'admin.photo_views' : {
             'handlers' : ['file_dump'],
             'level' : 'ERROR',

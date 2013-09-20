@@ -15,27 +15,23 @@
         <div class="album-description">{{ album.description|safe }}</div>
         <div class="clearfix"></div>
         {% if album.get_photos|length > 0 %}
-            {% if photo %}
                 <div class="album-photo-view">
                     <a href="{{ photo.get_file_url }}" rel="lightbox"><img class="img-polaroid" src="{{ photo.get_file_url }}" alt="photo" title="{{ photo.description }}"></a>
                     <div class="album-photo-description">{{ photo.author }} - {{ photo.description }}</div>
+                    {% if prev_i >= 0 %}
+                        <a href="{% url 'photos:details_sel_photo' album.id prev_i %}"><img class="photo-prev" src="{% static 'img/prev.png' %}" /></a>
+                    {% endif %}
+                    {% if next_i %}
+                        <a href="{% url 'photos:details_sel_photo' album.id next_i %}"><img class="photo-next" src="{% static 'img/next.png' %}" /></a>
+                    {% endif %}
                 </div>
-            {% else %}
-                {% with p=album.get_photos|first %}
-                    <div class="album-photo-view">
-                        <a href="{{ p.get_file_url }}" rel="lightbox"><img class="img-polaroid" src="{{ p.get_file_url }}" alt="photo" title="{{ p.description }}"></a>
-                        <div class="album-photo-description">{{ p.author }} - {{ p.description }}</div>
-                    </div>
-                {% endwith %}
-            {% endif %}
             <div class="album-photo-list">
             {% for p in album.get_photos %}
-                <div class="album-photo-thumbnail"><a href="{% url 'photos:details_sel_photo' album.id p.id %}"><img class="img-polaroid" alt="pic-{{ forloop.counter }}" src="{{ p.get_thumb_url }}" title="{{ p.description }}"></a></div>
+                <div class="album-photo-thumbnail"><a href="{% url 'photos:details_sel_photo' album.id forloop.counter0 %}"><img class="img-polaroid" alt="pic-{{ forloop.counter }}" src="{{ p.get_thumb_url }}" title="{{ p.description }}"></a></div>
             {% endfor %}
             </div>
         {% else %}
             <div class="album-photo-absent">В этом альбоме нет фото</div>
         {% endif %}
-
     </div>
 {% endblock %}

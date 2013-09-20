@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from types import NoneType
 
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django import forms
 from snzphoto import settings
 from snzphoto.utils import translit
+from django.core.files.storage import default_storage as fs
 
 class VideoPost(models.Model):
     id = models.AutoField(primary_key=True)
@@ -16,6 +17,7 @@ class VideoPost(models.Model):
     text = models.TextField()
     link = models.CharField(max_length=1024)
     uid = models.CharField(max_length=256, unique=True)
+    preview_img = models.CharField(max_length=128, default="")
 
     class Meta:
         db_table = "videoposts"
@@ -35,6 +37,26 @@ class VideoPost(models.Model):
 
     def comments_count(self):
         return VideoPostComment.objects.filter(video_post=self).count()
+
+    def has_preview(self):
+        if  str(self.preview_img) != "None":
+            return len(self.preview_img) > 0
+        else:
+            return False
+
+    """Путь к файлу изображения относительно корня хранилища"""
+    def get_preview_path(self):
+        if self.has_preview():
+            return "videos_data/%s" % self.preview_img
+        else:
+            return "blank.png"
+
+    """URL к файлу изображения относительно корня хранилища"""
+    def get_preview_url(self):
+        if self.has_preview():
+            return fs.url(self.get_preview_path())
+        else:
+            return fs.url("blank.png")
 
 class VideoPostComment(models.Model):
     class Meta:

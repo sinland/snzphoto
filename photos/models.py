@@ -17,11 +17,15 @@ class PhotoAlbum(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     views_counter = models.BigIntegerField()
 
+    cached_photos = []
+
     def photos_count(self):
         return Photo.objects.filter(album=self).count()
 
     def get_photos(self):
-        return Photo.objects.filter(album=self)
+        if len(self.cached_photos) == 0:
+            self.cached_photos = Photo.objects.filter(album=self)
+        return self.cached_photos
 
     def get_random_photo_url(self):
         total = self.photos_count()

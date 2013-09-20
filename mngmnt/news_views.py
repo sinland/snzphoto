@@ -262,7 +262,7 @@ def attachment_upload(r):
         return HttpResponse(get_script_response(code=1, message='File format not supported!'))
 
     hash_base = "%s-%s-%s-%s" % (f.name, datetime.datetime.now().isoformat(' '), r.META['HTTP_USER_AGENT'], r.META['REMOTE_ADDR'])
-    fname_base = hashlib.sha1(hash_base).hexdigest()
+    fname_base = hashlib.sha1(hash_base.encode('utf-8')).hexdigest()
     ext = f.name.split('.')[-1]
     if len(ext) > 5:
         ext = ext[0:2]
