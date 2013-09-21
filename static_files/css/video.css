@@ -32,6 +32,9 @@ table.video-list-item-info td{
     vertical-align: top;
     padding: 10px;
 }
+table.video-list-item-info span{
+    padding: 10px;
+}
 table.video-list-item-info td  a{
     margin: 20px 0 0 0;
 }

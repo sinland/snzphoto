@@ -17,7 +17,7 @@ from news.models import *
 from mngmnt.models import *
 
 #global objects
-log = logging.getLogger(name='manager.ajax')
+log = logging.getLogger(name='manager-news')
 
 @cache_control(must_revalidate=True)
 def index(request, page = 1):
@@ -278,7 +278,8 @@ def attachment_upload(r):
         im = Image.open(fs.path('uploads/%s' % fname_base))
         im.thumbnail(settings.IMG_THUMBS_SIZE, Image.ANTIALIAS)
         im.save(fs.path(thumb_file), "JPEG")
-    except Exception:
+    except Exception as e:
+        log.error("Failed to create thumbnail. %s" % e.message)
         fs.save(thumb_file, r.FILES['userfile'])
 
     #return url to it
