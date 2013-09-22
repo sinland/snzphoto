@@ -9,7 +9,9 @@
         <div class='event-list-item'>
             <div class="title"><a href="{% url 'news:show_post' news.uid %}">{{ news.title|capfirst }}</a></div>
             <div>{{ news.text|safe }}</div>
-            <img class="img-polaroid" src="{{ news.attach_full_url }}">
+            {% if news.enclosure %}
+            <img class="img-polaroid" src="{{ news.attach_thumb_url }}">
+            {% endif %}
             <div>{{ news.author.username }} | {{ news.creation_date|date:"d.m.Y в H:i" }} | <a href="{% url 'news:show_post' news.uid %}">комментарий [{{ news.comments_count }}]</a></div>
         </div>
     {% endfor %}
