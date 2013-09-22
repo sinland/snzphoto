@@ -58,6 +58,7 @@
 }
 
 form#frm-comment div.frm-control {
+    padding: 3px 0;
     position: relative;
 }
 form#frm-comment div.submit-btn,

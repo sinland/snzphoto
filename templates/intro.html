@@ -25,9 +25,7 @@
 </head>
 <body>
 <div class="container site-background">
-    <div class="intro-header">
-
-    </div>
+    <div class="intro-header"></div>
     <div class="intro-content">
         <div class="intro-nav-events" onclick="javascript:document.location='{% url 'news:index' %}'">&nbsp;</div>
         <div class="intro-nav-forum" onclick="javascript:document.location='{% url 'debates:index' %}'">&nbsp;</div>
@@ -37,14 +35,19 @@
     <div class="intro-footer">
         &nbsp;
     </div>
-    <script type="text/javascript">
+</div>
+<script type="text/javascript">
         $(function(){
-            $.get("/static/img/intro-events-over.png");
-            $.get("/static/img/intro-forum-over.png");
-            $.get("/static/img/intro-photo-over.png");
-            $.get("/static/img/intro-video-over.png");
+            var arrayOfImages = [
+                "{% static 'img/intro-events-over.png' %}",
+                "{% static 'img/intro-forum-over.png' %}",
+                "{% static 'img/intro-photo-over.png' %}",
+                "{% static 'img/intro-video-over.png' %}"
+            ];
+            $(arrayOfImages).each(function(){
+                $('<img/>')[0].src = this;
+            });
         });
     </script>
-</div>
 </body>
 </html>
